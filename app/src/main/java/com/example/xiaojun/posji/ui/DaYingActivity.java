@@ -46,7 +46,6 @@ public class DaYingActivity extends Activity {
     private final int LOWBATTERY = 4;
     private final int PRINTVERSION = 5;
     private final int PRINTBARCODE = 6;
-    private final int PRINTQRCODE = 7;
     private final int PRINTPAPERWALK = 8;
     private final int PRINTCONTENT = 9;
     private final int CANCELPROMPT = 10;
