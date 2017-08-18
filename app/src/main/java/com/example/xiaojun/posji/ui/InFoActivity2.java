@@ -1,18 +1,13 @@
 package com.example.xiaojun.posji.ui;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
+
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
-import android.graphics.PointF;
-import android.graphics.SurfaceTexture;
 import android.media.FaceDetector;
 import android.net.Uri;
 
@@ -587,24 +582,27 @@ public class InFoActivity2 extends Activity {
 
 //    /* form的分割线,自己定义 */
 //        String boundary = "xx--------------------------------------------------------------xx";
-        RequestBody body = new FormBody.Builder()
-                .add("cardNumber",userInfoBena.getCertNumber())
-                .add("name",userInfoBena.getPartyName())
-                .add("gender",userInfoBena.getGender())
-                .add("birthday",userInfoBena.getBornDay())
-                .add("address",userInfoBena.getCertAddress())
-                .add("cardPhoto",userInfoBena.getCardPhoto())
-                .add("scanPhoto",userInfoBena.getScanPhoto())
-                .add("organ",userInfoBena.getCertOrg())
-                .add("termStart",userInfoBena.getEffDate())
-                .add("termEnd",userInfoBena.getExpDate())
-                .add("accountId","1")
-                .add("result",biduijieguo)
-                .add("homeNumber",fanghao.getText().toString().trim())
-                .add("phone",dianhua.getText().toString().trim())
-                .add("carNumber",chepaihao.getText().toString().trim())
-                .add("score",xiangsi)
-				.build();
+        RequestBody body=null;
+        try {
+             body = new FormBody.Builder()
+                    .add("cardNumber",userInfoBena.getCertNumber())
+                    .add("name",userInfoBena.getPartyName())
+                    .add("gender",userInfoBena.getGender())
+                    .add("birthday",userInfoBena.getBornDay())
+                    .add("address",userInfoBena.getCertAddress())
+                    .add("cardPhoto",userInfoBena.getCardPhoto())
+                    .add("scanPhoto",userInfoBena.getScanPhoto())
+                    .add("organ",userInfoBena.getCertOrg())
+                    .add("termStart",userInfoBena.getEffDate())
+                    .add("termEnd",userInfoBena.getExpDate())
+                    .add("accountId","1")
+                    .add("result",biduijieguo)
+                    .add("homeNumber",fanghao.getText().toString().trim())
+                    .add("phone",dianhua.getText().toString().trim())
+                    .add("carNumber",chepaihao.getText().toString().trim())
+                    .add("score",xiangsi)
+                    .build();
+
 
         Request.Builder requestBuilder = new Request.Builder()
                 // .header("Content-Type", "application/json")
@@ -690,6 +688,9 @@ public class InFoActivity2 extends Activity {
             }
         });
 
+        }catch (NullPointerException e){
+            Log.d("InFoActivity2", e.getMessage());
+        }
 
     }
 

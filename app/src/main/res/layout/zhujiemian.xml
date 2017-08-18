@@ -48,7 +48,7 @@
 <LinearLayout
     android:orientation="vertical"
     android:id="@+id/jiemian"
-    android:background="@drawable/bj"
+    android:background="@drawable/beijin"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
