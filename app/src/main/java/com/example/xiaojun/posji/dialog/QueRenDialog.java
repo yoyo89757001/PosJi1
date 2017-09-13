@@ -41,7 +41,14 @@ public class QueRenDialog extends Dialog {
     public void setTestColo(){
         shuoming.setTextColor(Color.parseColor("#ffe70707"));
 
+    }
 
+    public void setViewShow(){
+        quxiao.setVisibility(View.VISIBLE);
+
+    }
+    public  void setButtonText(String ss){
+        positiveButton.setText(ss);
     }
 
     public  void setCountText(String ss){

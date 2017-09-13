@@ -409,6 +409,7 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
                                     intent.putExtra("time", riqi_tv.getText().toString().trim());
                                     intent.putExtra("shoufangren", shoufangren.getText().toString().trim());
                                     intent.putExtra("name", name.getText().toString().trim());
+                                    intent.putExtra("idid", id);
                                     startActivity(intent);
 
                                 }

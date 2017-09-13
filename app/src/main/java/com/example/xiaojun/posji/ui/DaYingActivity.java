@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,16 +19,43 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirGetCallback;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
+import com.example.xiaojun.posji.beans.JiuDianBean;
+import com.example.xiaojun.posji.beans.LogoBean;
+import com.example.xiaojun.posji.beans.ShiBieBean;
+import com.example.xiaojun.posji.utils.GsonUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.telpo.tps550.api.TelpoException;
 import com.telpo.tps550.api.printer.UsbThermalPrinter;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 public class DaYingActivity extends Activity {
@@ -35,7 +63,7 @@ public class DaYingActivity extends Activity {
     private Button dayin;
     private TextView t1,t2,t3,t4,t5;
     private EditText beizhu;
-    private ImageView erweima;
+    private ImageView erweima,logo;
     private String Result;
     private ImageView iii;
     private int printGray=5; //灰度
@@ -57,6 +85,10 @@ public class DaYingActivity extends Activity {
     private UsbThermalPrinter mUsbThermalPrinter = new UsbThermalPrinter(DaYingActivity.this);
     private Bitmap bitmap=null;
     private String name=null,shoufangren=null,riqi=null;
+    private String id=null;
+    public static final int TIMEOUT = 1000 * 60;
+    private String zhuji=null;
+    private JiuDianBean jiudianbean=null;
 
     private class MyHandler extends Handler {
         @Override
@@ -133,10 +165,42 @@ public class DaYingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daying);
+
+        jiudianbean= MyAppLaction.jiuDianBean;
+        Type resultType2 = new TypeToken<String>() {
+        }.getType();
+        Reservoir.getAsync("zhuji", resultType2, new ReservoirGetCallback<String>() {
+            @Override
+            public void onSuccess(final String i) {
+                zhuji=i;
+            link_tianqi3();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.d("InFoActivity", "获取本地异常ip:"+e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Toast tastyToast= TastyToast.makeText(DaYingActivity.this,"获取地址失败",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                        tastyToast.setGravity(Gravity.CENTER,0,0);
+                        tastyToast.show();
+                    }
+                });
+
+
+            }
+
+        });
+
+
         name=getIntent().getStringExtra("name");
         shoufangren=getIntent().getStringExtra("shoufangren");
         riqi=getIntent().getStringExtra("time");
+        id=getIntent().getStringExtra("idid");
 
+        logo=(ImageView) findViewById(R.id.logo);
         t1= (TextView) findViewById(R.id.name);
         t2= (TextView) findViewById(R.id.danwei);
         t3= (TextView) findViewById(R.id.riqi);
@@ -146,7 +210,7 @@ public class DaYingActivity extends Activity {
         erweima= (ImageView) findViewById(R.id.erweima);
         Bitmap bitmap2 = null;
         try {
-            bitmap2 = CreateCode("3232132132", BarcodeFormat.QR_CODE, 316, 316);
+            bitmap2 = CreateCode(id, BarcodeFormat.CODE_128, 316, 316);
             erweima.setImageBitmap(bitmap2);
 
         } catch (WriterException e) {
@@ -291,5 +355,83 @@ public class DaYingActivity extends Activity {
         // 通过像素数组生成bitmap,具体参考api
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
         return bitmap;
+    }
+
+    private void link_tianqi3() {
+        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
+        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
+
+//    /* form的分割线,自己定义 */
+//        String boundary = "xx--------------------------------------------------------------xx";
+        RequestBody body = new FormBody.Builder()
+                .add("accountId",jiudianbean.getId())
+                .build();
+
+        Request.Builder requestBuilder = new Request.Builder()
+                // .header("Content-Type", "application/json")
+                .post(body)
+                .url(zhuji + "/getTemplate.do");
+
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Toast tastyToast= TastyToast.makeText(DaYingActivity.this,"上传图片出错，请返回后重试！",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                        tastyToast.setGravity(Gravity.CENTER,0,0);
+                        tastyToast.show();
+                    }
+                });
+                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                //获得返回体
+                try {
+
+                    ResponseBody body = response.body();
+                    // Log.d("AllConnects", "识别结果返回"+response.body().string());
+                    String ss=body.string().trim();
+                    Log.d("InFoActivity", ss);
+                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson=new Gson();
+                    final LogoBean logoBean=gson.fromJson(jsonObject,LogoBean.class);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Glide.with(DaYingActivity.this).load(zhuji+"/upload/logo/"+logoBean.getLogo()).asBitmap().into(new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                    logo.setImageBitmap(resource);
+                                }
+                            });
+                        }
+                    });
+
+
+                }catch (Exception e){
+
+                    Log.d("WebsocketPushMsg", e.getMessage());
+                }
+            }
+        });
+
     }
 }

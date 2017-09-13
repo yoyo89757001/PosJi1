@@ -11,8 +11,7 @@
 
     <LinearLayout
         android:gravity="center"
-        android:layout_marginTop="50dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="65dp">
 
@@ -49,35 +48,32 @@
             android:layout_height="36dp" />
 
     </LinearLayout>
+    <View
+        android:background="@color/bg_color"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
         android:gravity="center"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="65dp">
 
         <Button
-            android:id="@+id/chaxun"
-            android:layout_width="120dp"
-            android:layout_height="36dp"
-            android:background="@drawable/jiaohu3"
             android:text="查询比对记录"
+            android:textSize="14sp"
             android:textColor="@color/write"
-            android:textSize="14sp" />
-
+            android:layout_width="120dp"
+            android:id="@+id/chaxun"
+            android:background="@drawable/jiaohu3"
+            android:layout_height="36dp" />
 
     </LinearLayout>
-
     <View
         android:background="@color/bg_color"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"/>
 
-    <View
-        android:background="@color/bg_color"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"/>
     <LinearLayout
         android:gravity="center"
         android:orientation="vertical"
@@ -100,6 +96,30 @@
         android:background="@color/bg_color"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"/>
+
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="65dp">
+
+        <Button
+            android:text="设置酒店信息"
+            android:textSize="14sp"
+            android:textColor="@color/write"
+            android:layout_width="120dp"
+            android:id="@+id/jiudian"
+            android:background="@drawable/jiaohu3"
+            android:layout_height="36dp" />
+
+
+    </LinearLayout>
+
+    <View
+        android:background="@color/bg_color"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"/>
+
     <LinearLayout
         android:gravity="center"
         android:orientation="vertical"
@@ -109,7 +129,7 @@
         <TextView
             android:textColor="@color/sbc_header_text"
             android:textSize="18sp"
-            android:text="瑞瞳智能科技有限公司"
+            android:text="中国电信"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

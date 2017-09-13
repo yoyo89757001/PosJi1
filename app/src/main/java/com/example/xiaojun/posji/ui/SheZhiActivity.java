@@ -7,21 +7,29 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.anupcowkur.reservoir.ReservoirPutCallback;
+
 import com.example.xiaojun.posji.R;
+import com.example.xiaojun.posji.dialog.XiuGaiJiuDianDialog;
 import com.example.xiaojun.posji.dialog.XiuGaiXinXiDialog;
 import com.google.gson.reflect.TypeToken;
 import com.sdsmdg.tastytoast.TastyToast;
+
 import java.lang.reflect.Type;
 
+import static com.example.xiaojun.posji.MyAppLaction.jiuDianBean;
+
+
 public class SheZhiActivity extends Activity {
-    private Button ipDiZHI,gengxin,chaxun,zhuji2;
+    private Button ipDiZHI,gengxin,chaxun,zhuji2,jiudian;
     private TextView title;
     private ImageView famhui;
     private String ip=null;
     private String zhuji=null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +61,11 @@ public class SheZhiActivity extends Activity {
 
             @Override
             public void onFailure(Exception e) {
-               // zhuji="http://192.168.2.101:8083";
-                zhuji="http://ruitong.iok.la:33433";
+                zhuji="http://183.3.158.132:8090";
             }
 
         });
 
-        ipDiZHI= (Button) findViewById(R.id.shezhiip);
-        gengxin= (Button) findViewById(R.id.jiancha);
-        title= (TextView) findViewById(R.id.title);
         zhuji2= (Button) findViewById(R.id.zhuji);
         zhuji2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +105,10 @@ public class SheZhiActivity extends Activity {
                 dialog.show();
             }
         });
+
+        ipDiZHI= (Button) findViewById(R.id.shezhiip);
+        gengxin= (Button) findViewById(R.id.jiancha);
+        title= (TextView) findViewById(R.id.title);
         title.setText("系统设置");
         famhui= (ImageView) findViewById(R.id.leftim);
         famhui.setVisibility(View.VISIBLE);
@@ -161,6 +169,46 @@ public class SheZhiActivity extends Activity {
             public void onClick(View v) {
                 startActivity(new Intent(SheZhiActivity.this,ChaXunActivity.class));
 
+            }
+        });
+
+        jiudian= (Button) findViewById(R.id.jiudian);
+        jiudian.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final XiuGaiJiuDianDialog dianDialog=new XiuGaiJiuDianDialog(SheZhiActivity.this);
+                dianDialog.setOnQueRenListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Reservoir.putAsync("jiudian",dianDialog.getJiuDianBean(), new ReservoirPutCallback() {
+                            @Override
+                            public void onSuccess() {
+                                TastyToast.makeText(SheZhiActivity.this,"保存成功",TastyToast.LENGTH_LONG,TastyToast.INFO).show();
+                                dianDialog.dismiss();
+                               // Log.d("MyAppLaction", "dianDialog.getJiuDianBean():" + dianDialog.getJiuDianBean().getId());
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                TastyToast.makeText(SheZhiActivity.this,"保存失败",TastyToast.LENGTH_LONG,TastyToast.INFO).show();
+                                dianDialog.dismiss();
+                            }
+                        });
+
+
+                    }
+                });
+                dianDialog.setQuXiaoListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dianDialog.dismiss();
+                    }
+                });
+                if (jiuDianBean!=null){
+                    dianDialog.setContents(jiuDianBean.getId(),jiuDianBean.getName());
+                }
+                dianDialog.show();
             }
         });
 

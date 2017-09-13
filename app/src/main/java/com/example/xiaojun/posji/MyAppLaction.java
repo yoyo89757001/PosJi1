@@ -5,13 +5,21 @@ import android.app.Application;
 import android.util.Log;
 
 import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirGetCallback;
+import com.example.xiaojun.posji.beans.JiuDianBean;
 import com.example.xiaojun.posji.dialog.JiaZaiDialog;
+import com.example.xiaojun.posji.utils.LibVLCUtil;
+import com.google.gson.reflect.TypeToken;
 import com.tencent.smtt.sdk.QbSdk;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
+
+import org.videolan.libvlc.LibVLC;
+
 import java.io.File;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 
 /**
@@ -21,6 +29,9 @@ import java.io.IOException;
 public class MyAppLaction extends Application{
     private File mCascadeFile;
     public static FaceDet mFaceDet;
+    public static String sip=null;
+    public static LibVLC libvlc;
+    public static JiuDianBean jiuDianBean=null;
 
    // public static CascadeClassifier mJavaDetector;
 
@@ -35,7 +46,7 @@ public class MyAppLaction extends Application{
 
         try {
 
-//            mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
+            mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
 
             Reservoir.init(this, 900*1024); //in bytes 1M
 
@@ -60,7 +71,42 @@ public class MyAppLaction extends Application{
             Log.d("gggg", e.getMessage());
 
         }
+        libvlc= LibVLCUtil.getLibVLC(getApplicationContext());
 
+        Type resultType = new TypeToken<String>() {
+        }.getType();
+        Reservoir.getAsync("ipipip", resultType, new ReservoirGetCallback<String>() {
+            @Override
+            public void onSuccess(final String i) {
+                sip=i;
+
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.d("MyAppLaction", e.getMessage()+"获取摄像头异常");
+
+            }
+
+        });
+
+
+        Type resultType3 = new TypeToken<JiuDianBean>() {
+        }.getType();
+        Reservoir.getAsync("jiudian", resultType3, new ReservoirGetCallback<JiuDianBean>() {
+            @Override
+            public void onSuccess(final JiuDianBean i) {
+                jiuDianBean=i;
+                //  Log.d("MyAppLaction", "jiuDianBean:" + jiuDianBean);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.d("MyAppLaction", e.getMessage()+"ddd");
+
+            }
+
+        });
 
 
 
