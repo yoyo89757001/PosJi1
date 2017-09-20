@@ -15,7 +15,7 @@
 
         <TextView
             android:id="@+id/title2"
-            android:text="修改酒店信息"
+            android:text="绑定用户信息"
             android:textSize="18sp"
             android:layout_weight="0.8"
             android:gravity="center"
@@ -33,7 +33,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
-        android:text="酒店id:"
+        android:text="账户id:"
         android:textColor="@color/blake"
         android:textSize="14sp"
         android:layout_marginLeft="16dp"
@@ -43,7 +43,7 @@
     <EditText
         android:textColor="@color/textcolor"
         android:textSize="14sp"
-        android:text="10000431"
+        android:hint="请从后台账户获取ID"
         android:paddingLeft="16dp"
         android:background="@null"
         android:gravity="center_vertical"
@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:text="酒店名称:"
+                android:text="账户名:"
                 android:layout_marginLeft="16dp"
                 android:textColor="@color/blake"
                 android:textSize="14sp"
@@ -72,7 +72,7 @@
             <EditText
                 android:textColor="@color/textcolor"
                 android:textSize="14sp"
-                android:text="南北纵横酒店"
+                android:hint="随意取(用于区别不同设备)"
                 android:paddingLeft="16dp"
                 android:background="@null"
                 android:gravity="center_vertical"
@@ -95,7 +95,7 @@
                 android:layout_width="0dp"
                 android:textColor="@color/colorBar_bg"
                 android:layout_weight="1"
-                android:text="确认"
+                android:text="绑定"
                 android:id="@+id/queren"
                 android:textSize="16sp"
                 android:background="@null"

@@ -9,8 +9,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.xiaojun.posji.R;
+import com.example.xiaojun.posji.beans.BaoCunBean;
+import com.example.xiaojun.posji.beans.BaoCunBeanDao;
 
 public class ShouYeActivity extends Activity implements View.OnClickListener {
+
+    private BaoCunBeanDao baoCunBeanDao=null;
+    private BaoCunBean baoCunBean=null;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,13 @@ public class ShouYeActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+            switch (v.getId()){
+                case R.id.dengji24:
+                    startActivity(new Intent(ShouYeActivity.this, RenGongActivity.class));
+                    break;
+                case R.id.dengji3:
+                    startActivity(new Intent(ShouYeActivity.this, YuYueActivity.class));
+                    break;
+            }
     }
 }

@@ -27,6 +27,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
+import com.example.xiaojun.posji.beans.BaoCunBean;
+import com.example.xiaojun.posji.beans.BaoCunBeanDao;
 import com.example.xiaojun.posji.beans.JiuDianBean;
 import com.example.xiaojun.posji.beans.LogoBean;
 import com.example.xiaojun.posji.beans.ShiBieBean;
@@ -89,6 +91,8 @@ public class DaYingActivity extends Activity {
     public static final int TIMEOUT = 1000 * 60;
     private String zhuji=null;
     private JiuDianBean jiudianbean=null;
+    private BaoCunBeanDao baoCunBeanDao=null;
+    private BaoCunBean baoCunBean=null;
 
     private class MyHandler extends Handler {
         @Override
@@ -166,34 +170,11 @@ public class DaYingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daying);
 
-        jiudianbean= MyAppLaction.jiuDianBean;
-        Type resultType2 = new TypeToken<String>() {
-        }.getType();
-        Reservoir.getAsync("zhuji", resultType2, new ReservoirGetCallback<String>() {
-            @Override
-            public void onSuccess(final String i) {
-                zhuji=i;
-            link_tianqi3();
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("InFoActivity", "获取本地异常ip:"+e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        Toast tastyToast= TastyToast.makeText(DaYingActivity.this,"获取地址失败",TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                        tastyToast.setGravity(Gravity.CENTER,0,0);
-                        tastyToast.show();
-                    }
-                });
-
-
-            }
-
-        });
-
+        baoCunBeanDao= MyAppLaction.myAppLaction.getDaoSession().getBaoCunBeanDao();
+        baoCunBean=baoCunBeanDao.load(123456L);
+        if (baoCunBean!=null && baoCunBean.getZhuji()!=null){
+            zhuji=baoCunBean.getZhuji();
+        }
 
         name=getIntent().getStringExtra("name");
         shoufangren=getIntent().getStringExtra("shoufangren");
@@ -371,7 +352,7 @@ public class DaYingActivity extends Activity {
 //    /* form的分割线,自己定义 */
 //        String boundary = "xx--------------------------------------------------------------xx";
         RequestBody body = new FormBody.Builder()
-                .add("accountId",jiudianbean.getId())
+                .add("accountId",baoCunBean.getZhangHuID())
                 .build();
 
         Request.Builder requestBuilder = new Request.Builder()

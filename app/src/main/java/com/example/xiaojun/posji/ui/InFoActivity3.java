@@ -32,6 +32,8 @@ import com.anupcowkur.reservoir.ReservoirGetCallback;
 
 import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
+import com.example.xiaojun.posji.beans.BaoCunBean;
+import com.example.xiaojun.posji.beans.BaoCunBeanDao;
 import com.example.xiaojun.posji.beans.JiuDianBean;
 import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShiBieBean;
@@ -107,7 +109,6 @@ public class InFoActivity3 extends Activity {
     private String filePath2=null;
     private File file1=null;
  //   private File file2=null;
-    private  String ip=null;
     long c=0;
     private Thread thread;
     private String shengfenzhengPath=null;
@@ -136,7 +137,9 @@ public class InFoActivity3 extends Activity {
     private static int count=1;
     private static final int MESSAGE_QR_SUCCESS = 1;
     private LibVLC libvlc;
-    private JiuDianBean jiuDianBean=null;
+    private BaoCunBeanDao baoCunBeanDao=null;
+    private BaoCunBean baoCunBean=null;
+
 
 
     Handler mHandler2 = new Handler() {
@@ -183,39 +186,21 @@ public class InFoActivity3 extends Activity {
 
         mFaceDet= MyAppLaction.mFaceDet;
         libvlc=MyAppLaction.libvlc;
-        jiuDianBean=MyAppLaction.jiuDianBean;
+        baoCunBeanDao= MyAppLaction.myAppLaction.getDaoSession().getBaoCunBeanDao();
+        baoCunBean=baoCunBeanDao.load(123456L);
+        if (baoCunBean!=null && baoCunBean.getZhuji()!=null){
+            zhuji=baoCunBean.getZhuji();
+        }else {
+            Toast tastyToast= TastyToast.makeText(InFoActivity3.this,"请先设置主机地址",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+            tastyToast.setGravity(Gravity.CENTER,0,0);
+            tastyToast.show();
+        }
 
 
         isTrue3=true;
         isTrue4=true;
 
 
-        Type resultType2 = new TypeToken<String>() {
-        }.getType();
-        Reservoir.getAsync("zhuji", resultType2, new ReservoirGetCallback<String>() {
-            @Override
-            public void onSuccess(final String i) {
-                zhuji=i;
-
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("InFoActivity", "获取本地异常ip:"+e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast tastyToast= TastyToast.makeText(InFoActivity3.this,"请先设置主机地址",TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                        tastyToast.setGravity(Gravity.CENTER,0,0);
-                        tastyToast.show();
-
-                    }
-                });
-
-
-            }
-
-        });
 
         String fn = "bbbb.jpg";
         FileUtil.isExists(FileUtil.PATH, fn);
@@ -269,8 +254,8 @@ public class InFoActivity3 extends Activity {
         });
 
         initView();
-        ip=MyAppLaction.sip;
-        if (ip!=null){
+
+        if (baoCunBean.getCameraIP()!=null){
             bofang();
         }else {
             Toast tastyToast = TastyToast.makeText(InFoActivity3.this, "请先设置摄像头IP地址", TastyToast.LENGTH_LONG, TastyToast.ERROR);
@@ -326,7 +311,7 @@ public class InFoActivity3 extends Activity {
 
 
                                 if (mediaPlayer != null) {
-                                    final Uri uri=Uri.parse("rtsp://"+ip+"/user=admin&password=&channel=1&stream=0.sdp");
+                                    final Uri uri=Uri.parse("rtsp://"+baoCunBean.getCameraIP()+"/user=admin&password=&channel=1&stream=0.sdp");
                                     media = new Media(libvlc, uri);
                                     mediaPlayer.setMedia(media);
                                     mediaPlayer.play();
@@ -420,7 +405,7 @@ public class InFoActivity3 extends Activity {
             public void onClick(View v) {
 
 
-                if (!userInfoBena.getCertNumber().equals("") && jiuDianBean!=null){
+                if (!userInfoBena.getCertNumber().equals("") && baoCunBean.getZhangHuID()!=null){
                     try {
                         if (bidui){
                             link_save();
@@ -1061,7 +1046,7 @@ public class InFoActivity3 extends Activity {
                 .add("organ",userInfoBena.getCertOrg())
                 .add("termStart",userInfoBena.getEffDate())
                 .add("termEnd",userInfoBena.getExpDate())
-                .add("accountId",jiuDianBean.getId()+"")
+                .add("accountId",baoCunBean.getZhangHuID())
                 .add("result",biduijieguo)
                 .add("homeNumber",fanghao.getText().toString().trim())
                 .add("phone",dianhua.getText().toString().trim())

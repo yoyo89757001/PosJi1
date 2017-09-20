@@ -55,6 +55,7 @@
 
     <LinearLayout
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="65dp">
@@ -104,7 +105,7 @@
         android:layout_height="65dp">
 
         <Button
-            android:text="设置酒店信息"
+            android:text="绑定设备"
             android:textSize="14sp"
             android:textColor="@color/write"
             android:layout_width="120dp"

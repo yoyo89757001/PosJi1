@@ -40,7 +40,7 @@ public class DateUtils {
     }
 
     public static String getTodayDateTimes() {
-        SimpleDateFormat format = new SimpleDateFormat("MM月dd日",
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",
                 Locale.getDefault());
         return format.format(new Date());
     }
@@ -108,6 +108,21 @@ public class DateUtils {
 
     }
 
+    /**
+     * 调用此方法输入所要转换的时间戳输入例如（1402733340）输出（"2014年06月14日16时09分00秒"）
+     *
+     * @param time
+     * @return
+     */
+    public static String timeData(String time) {
+        SimpleDateFormat sdr = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        @SuppressWarnings("unused")
+        long lcc = Long.valueOf(time);
+      //  int i = Integer.parseInt(time);
+        String times = sdr.format(new Date(lcc));
+        return times;
+
+    }
     /**
      * 调用此方法输入所要转换的时间戳输入例如（1402733340）输出（"2014-06-14  16:09:00"）
      *

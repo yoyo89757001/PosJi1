@@ -25,11 +25,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
-import com.example.xiaojun.posji.beans.JiuDianBean;
+import com.example.xiaojun.posji.beans.BaoCunBean;
+import com.example.xiaojun.posji.beans.BaoCunBeanDao;
 import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShiBieBean;
 import com.example.xiaojun.posji.beans.UserInfoBena;
@@ -39,22 +38,18 @@ import com.example.xiaojun.posji.dialog.TiJIaoDialog;
 import com.example.xiaojun.posji.utils.FileUtil;
 import com.example.xiaojun.posji.utils.GsonUtil;
 import com.example.xiaojun.posji.utils.Utils;
-import com.example.xiaojun.posji.view.HorizontalProgressBarWithNumber;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+
 import com.google.zxing.other.BeepManager;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.telpo.tps550.api.TelpoException;
 import com.telpo.tps550.api.idcard.IdCard;
 import com.telpo.tps550.api.idcard.IdentityInfo;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -74,13 +69,13 @@ public class InFoActivity2 extends Activity {
     private ImageView zhengjianzhao,xianchengzhao;
     private Button button;
     private File mSavePhotoFile;
-    private HorizontalProgressBarWithNumber progressBarWithNumber;
+
    // public static final String HOST="http://192.168.0.104:8080";
     private JiaZaiDialog jiaZaiDialog=null;
     private String xiangsi="";
     private String biduijieguo="";
     private TiJIaoDialog tiJIaoDialog=null;
-    public static final String HOST="http://192.168.2.101:8081";
+  //  public static final String HOST="http://192.168.2.101:8081";
    // public static final String HOST="http://174p2704z3.51mypc.cn:11100";
   //  public static final String HOST="http://192.168.2.43:8080";
    public static final int TIMEOUT = 1000 * 60;
@@ -89,11 +84,11 @@ public class InFoActivity2 extends Activity {
     private boolean bidui=false;
     private Bitmap bitmapBig=null;
     private GetIDInfoTask async=null;
-    private int numberOfFace = 4;       //最大检测的人脸数
-    private FaceDetector myFaceDetect;  //人脸识别类的实例
-    private FaceDetector.Face[] myFace; //存储多张人脸的数组变量
-    int myEyesDistance;           //两眼之间的距离
-    int numberOfFaceDetected=0;       //实际检测到的人脸数
+//    private int numberOfFace = 4;       //最大检测的人脸数
+//    private FaceDetector myFaceDetect;  //人脸识别类的实例
+//    private FaceDetector.Face[] myFace; //存储多张人脸的数组变量
+//    int myEyesDistance;           //两眼之间的距离
+//    int numberOfFaceDetected=0;       //实际检测到的人脸数
     private static final int MESSAGE_QR_SUCCESS = 1;
     private UserInfoBena userInfoBena=null;
     private SensorInfoReceiver sensorInfoReceiver;
@@ -116,7 +111,9 @@ public class InFoActivity2 extends Activity {
     private String fringerprintData;
     private final int REQUEST_TAKE_PHOTO=33;
     private  String zhuji=null;
-    private JiuDianBean jiuDianBean=null;
+    private BaoCunBeanDao baoCunBeanDao=null;
+    private BaoCunBean baoCunBean=null;
+
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -135,35 +132,17 @@ public class InFoActivity2 extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        jiuDianBean= MyAppLaction.jiuDianBean;
-
         setContentView(R.layout.zhujiemian2);
-        Type resultType2 = new TypeToken<String>() {
-        }.getType();
-        Reservoir.getAsync("zhuji", resultType2, new ReservoirGetCallback<String>() {
-            @Override
-            public void onSuccess(final String i) {
-                zhuji=i;
 
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("InFoActivity", "获取本地异常ip:"+e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"请先设置主机地址",TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                        tastyToast.setGravity(Gravity.CENTER,0,0);
-                        tastyToast.show();
-                    }
-                });
-
-
-            }
-
-        });
+        baoCunBeanDao= MyAppLaction.myAppLaction.getDaoSession().getBaoCunBeanDao();
+        baoCunBean=baoCunBeanDao.load(123456L);
+        if (baoCunBean!=null && baoCunBean.getZhuji()!=null){
+            zhuji=baoCunBean.getZhuji();
+        }else {
+            Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"无法连接读卡器",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+            tastyToast.setGravity(Gravity.CENTER,0,0);
+            tastyToast.show();
+        }
 
         String fn = "bbbb.jpg";
         FileUtil.isExists(FileUtil.PATH, fn);
@@ -331,7 +310,7 @@ public class InFoActivity2 extends Activity {
             }
         });
 
-        progressBarWithNumber= (HorizontalProgressBarWithNumber) findViewById(R.id.id_progressbar01);
+
 
     }
 
@@ -600,7 +579,7 @@ public class InFoActivity2 extends Activity {
                     .add("organ",userInfoBena.getCertOrg())
                     .add("termStart",userInfoBena.getEffDate())
                     .add("termEnd",userInfoBena.getExpDate())
-                    .add("accountId",jiuDianBean.getId()+"")
+                    .add("accountId",baoCunBean.getZhangHuID()+"")
                     .add("result",biduijieguo)
                     .add("homeNumber",fanghao.getText().toString().trim())
                     .add("phone",dianhua.getText().toString().trim())

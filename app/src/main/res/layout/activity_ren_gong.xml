@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.xiaojun.posji.ui.RenGongActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/jiemian"
+        android:background="#EAEAEA"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.4"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_weight="1.4"
+                    android:background="@drawable/beijin"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout2"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="30dp"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/paizhao"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:background="@drawable/topop"
+                            android:scaleType="fitXY" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="姓        名:   "
+                        android:textColor="@color/contents_text"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/name"
+                        android:layout_width="230dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/zidonghuoqu10"
+                        android:gravity="center"
+                        android:hint="请输入姓名"
+                        android:maxLength="11"
+                        android:textColor="@color/blake"
+                        android:textColorHint="#FF8C8C8C"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="手  机  号:   "
+                        android:textColor="@color/contents_text"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/dianhua"
+                        android:layout_width="230dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/zidonghuoqu10"
+                        android:gravity="center"
+                        android:inputType="phone"
+                        android:maxLength="11"
+                        android:textColor="@color/blake"
+                        android:textSize="12sp"
+                        android:textColorHint="#FF8C8C8C"
+                        android:hint="请输入本人手机号"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="来访日期:   "
+                        android:textColor="@color/contents_text"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/qixian"
+                        android:layout_width="230dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/zidonghuoqu10"
+                        android:gravity="center"
+                        android:textColor="@color/blake"
+                        android:textColorHint="#FF8C8C8C"
+                        android:textSize="12sp"
+                        android:hint="请选择来访日期"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="被  访  人:   "
+                        android:textColor="@color/contents_text"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/dizhi"
+                        android:layout_width="230dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/zidonghuoqu10"
+                        android:gravity="center"
+                        android:textColor="@color/blake"
+                        android:textColorHint="#FF8C8C8C"
+                        android:textSize="12sp"
+                        android:hint="请输入被访人姓名"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="手  机  号:   "
+                        android:textColor="@color/contents_text"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/chepai"
+                        android:layout_width="230dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/zidonghuoqu10"
+                        android:gravity="center"
+                        android:hint="请输入被访人手机号"
+                        android:textColorHint="#FF8C8C8C"
+                        android:inputType="phone"
+                        android:textColor="@color/blake"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="访客人数:   "
+                        android:textColor="@color/contents_text"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/renshu"
+                        android:layout_width="230dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/zidonghuoqu10"
+                        android:gravity="center"
+                        android:textColor="@color/blake"
+                        android:inputType="phone"
+                        android:textSize="12sp"
+                        android:textColorHint="#FF8C8C8C"
+                        android:hint="请输入访客人数"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="预约结果:   "
+                        android:textColor="@color/contents_text"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/mudi"
+                        android:layout_width="230dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/zidonghuoqu10"
+                        android:gravity="center"
+                        android:textColor="@color/tabtextcolo"
+                        android:textSize="12sp"
+                        android:text="已确认,电话联系被访人"
+                        android:textColorHint="#FF8C8C8C"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="0.5"
+            android:gravity="top|center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:text="确     定"
+                android:textSize="14sp"
+                android:id="@+id/wancheng"
+                android:layout_marginRight="20dp"
+                android:textColor="@color/write"
+                android:background="@drawable/jiaohu"
+                android:layout_width="170dp"
+                android:layout_height="40dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

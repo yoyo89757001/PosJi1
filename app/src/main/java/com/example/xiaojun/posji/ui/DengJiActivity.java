@@ -26,7 +26,10 @@ import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
+import com.example.xiaojun.posji.beans.BaoCunBean;
+import com.example.xiaojun.posji.beans.BaoCunBeanDao;
 import com.example.xiaojun.posji.beans.ShouFangBean;
 import com.example.xiaojun.posji.dialog.TiJIaoDialog;
 import com.example.xiaojun.posji.dialog.YuYueDialog;
@@ -72,11 +75,25 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
     private String shiyou;
     private String zhuji=null;
     private YuYueDialog dialog=null;
+    private BaoCunBeanDao baoCunBeanDao=null;
+    private BaoCunBean baoCunBean=null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deng_ji);
+
+        baoCunBeanDao= MyAppLaction.myAppLaction.getDaoSession().getBaoCunBeanDao();
+        baoCunBean=baoCunBeanDao.load(123456L);
+        if (baoCunBean!=null && baoCunBean.getZhuji()!=null){
+            zhuji=baoCunBean.getZhuji();
+        }else {
+            Toast tastyToast= TastyToast.makeText(DengJiActivity.this,"请先设置主机地址",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+            tastyToast.setGravity(Gravity.CENTER,0,0);
+            tastyToast.show();
+        }
+
         nameS=getIntent().getStringExtra("name");
         type=getIntent().getIntExtra("type",0);
         bidui=getIntent().getBooleanExtra("bidui",false);
@@ -96,34 +113,8 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
                 break;
 
         }
-        Type resultType2 = new TypeToken<String>() {
-        }.getType();
-        Reservoir.getAsync("zhuji", resultType2, new ReservoirGetCallback<String>() {
-            @Override
-            public void onSuccess(final String i) {
-                zhuji=i;
-
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("InFoActivity", "获取本地异常ip:"+e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast tastyToast= TastyToast.makeText(DengJiActivity.this,"获取本地ip异常",TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                        tastyToast.setGravity(Gravity.CENTER,0,0);
-                        tastyToast.show();
-                        Toast tastyToast2= TastyToast.makeText(DengJiActivity.this,"获取本地ip异常",TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                        tastyToast2.setGravity(Gravity.CENTER,0,0);
-                        tastyToast2.show();
-                    }
-                });
 
 
-            }
-
-        });
 
         IntentFilter intentFilter1 = new IntentFilter();
         intentFilter1.addAction("guanbi2");
