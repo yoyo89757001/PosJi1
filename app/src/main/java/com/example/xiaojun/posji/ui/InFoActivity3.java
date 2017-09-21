@@ -54,8 +54,6 @@ import com.telpo.tps550.api.idcard.IdCard;
 import com.telpo.tps550.api.idcard.IdentityInfo;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
-
-
 import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -65,7 +63,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -941,10 +938,12 @@ public class InFoActivity3 extends Activity {
             callback=null;
             vlcVout=null;
         }
-
-        if (mediaPlayer!=null){
+        if(media!=null){
             media.release();
             media=null;
+        }
+        if (mediaPlayer!=null){
+
             mediaPlayer=null;
         }
         if (libvlc!=null){

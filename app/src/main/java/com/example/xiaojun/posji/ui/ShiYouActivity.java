@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
-
 import com.example.xiaojun.posji.R;
 
 public class ShiYouActivity extends Activity implements View.OnClickListener {

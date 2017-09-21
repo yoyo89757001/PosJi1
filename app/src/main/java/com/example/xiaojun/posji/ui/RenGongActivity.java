@@ -13,7 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
@@ -22,18 +23,15 @@ import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShouFangBean;
 import com.example.xiaojun.posji.dialog.JiaZaiDialog;
 import com.example.xiaojun.posji.dialog.TiJIaoDialog;
-import com.example.xiaojun.posji.dialog.YuYueDialog;
 import com.example.xiaojun.posji.utils.DateUtils;
 import com.example.xiaojun.posji.utils.FileUtil;
 import com.example.xiaojun.posji.utils.GsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -139,7 +137,7 @@ public class RenGongActivity extends Activity {
             switch (requestCode) {
                 case REQUEST_TAKE_PHOTO:  //拍照
                     //注意，如果拍照的时候设置了MediaStore.EXTRA_OUTPUT，data.getData=null
-                    paizhao.setImageURI(Uri.fromFile(mSavePhotoFile));
+                   // paizhao.setImageURI(Uri.fromFile(mSavePhotoFile));
 
                     link_P2();
 
@@ -174,8 +172,12 @@ public class RenGongActivity extends Activity {
     }
 
     private void link_P2() {
-        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
-        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
+
+        if (jiaZaiDialog==null){
+            jiaZaiDialog=new JiaZaiDialog(RenGongActivity.this);
+            jiaZaiDialog.setText("上传图片中...");
+            jiaZaiDialog.show();
+        }
         OkHttpClient okHttpClient= new OkHttpClient.Builder()
                 .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
@@ -237,7 +239,10 @@ public class RenGongActivity extends Activity {
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求识别成功"+call.request().toString());
                 //删掉文件
-
+                if (jiaZaiDialog!=null && jiaZaiDialog.isShowing()){
+                    jiaZaiDialog.dismiss();
+                    jiaZaiDialog=null;
+                }
                 //获得返回体
                 try {
 
@@ -248,6 +253,17 @@ public class RenGongActivity extends Activity {
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
                     photos= gson.fromJson(jsonObject,Photos.class);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Glide.with(RenGongActivity.this)
+                                    .load(mSavePhotoFile)
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    // .transform(new GlideCircleTransform(RenGongFuWuActivity.this,1, Color.parseColor("#ffffffff")))
+                                    .into(paizhao);
+                        }
+                    });
 
                 }catch (Exception e){
                     runOnUiThread(new Runnable() {

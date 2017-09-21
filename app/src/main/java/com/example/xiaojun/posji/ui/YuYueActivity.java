@@ -3,6 +3,7 @@ package com.example.xiaojun.posji.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.xiaojun.posji.MyAppLaction;
@@ -25,8 +27,10 @@ import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShiBieBean;
 import com.example.xiaojun.posji.beans.UserInfoBena;
 import com.example.xiaojun.posji.beans.YuYueBean;
+import com.example.xiaojun.posji.beans.YuYueInterface;
 import com.example.xiaojun.posji.dialog.JiaZaiDialog;
 import com.example.xiaojun.posji.dialog.TiJIaoDialog;
+import com.example.xiaojun.posji.dialog.XuanZeDialog;
 import com.example.xiaojun.posji.utils.DateUtils;
 import com.example.xiaojun.posji.utils.FileUtil;
 import com.example.xiaojun.posji.utils.GsonUtil;
@@ -52,7 +56,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class YuYueActivity extends Activity {
+public class YuYueActivity extends Activity implements YuYueInterface {
     private EditText name,shouji,biduijieguo,xiangsidu;
     private ImageView p1,p2;
     private Button chaxun,xiayibu;
@@ -67,6 +71,9 @@ public class YuYueActivity extends Activity {
     private File mSavePhotoFile;
     private JiaZaiDialog  jiaZaiDialog=null;
     private UserInfoBena userInfoBena=null;
+    private XuanZeDialog xuanZeDialog=null;
+    private boolean isPai=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +128,16 @@ public class YuYueActivity extends Activity {
         xiayibu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                link_P1(shengfenzhengPath);
+
+                if ( shengfenzhengPath!=null && isPai){
+                    link_P1(shengfenzhengPath);
+                }else {
+
+                    Toast tastyToast = TastyToast.makeText(YuYueActivity.this, "请先点击拍照", TastyToast.LENGTH_SHORT, TastyToast.ERROR);
+                    tastyToast.setGravity(Gravity.CENTER, 0, 0);
+                    tastyToast.show();
+                }
+
             }
         });
 
@@ -181,10 +197,7 @@ public class YuYueActivity extends Activity {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    if (tiJIaoDialog!=null){
-                        tiJIaoDialog.dismiss();
-                        tiJIaoDialog=null;
-                    }
+
                     Log.d("AllConnects", "请求识别成功"+call.request().toString());
                     //获得返回体
                     try {
@@ -204,15 +217,30 @@ public class YuYueActivity extends Activity {
                                     Glide.with(YuYueActivity.this).load(zhuji+"/upload/compare/"+ objectsBeanList.get(0).getScanPhoto()).asBitmap().into(new SimpleTarget<Bitmap>() {
                                         @Override
                                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                            p1.setImageBitmap(resource);
+                                            if (tiJIaoDialog!=null){
+                                                tiJIaoDialog.dismiss();
+                                                tiJIaoDialog=null;
+                                            }
                                             String fn="yuyuezhao.jpg";
                                             FileUtil.isExists(FileUtil.PATH,fn);
                                             saveBitmap2File(resource.copy(Bitmap.Config.ARGB_8888,false), FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,100);
-
+                                            p1.setImageBitmap(resource);
                                         }
                                     });
                                 }
                             });
+
+                        }else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                     xuanZeDialog=new XuanZeDialog(YuYueActivity.this,objectsBeanList,zhuji,YuYueActivity.this);
+                                    xuanZeDialog.setCanceledOnTouchOutside(false);
+                                     xuanZeDialog.show();
+                                }
+                            });
+
 
                         }
 
@@ -252,9 +280,14 @@ public class YuYueActivity extends Activity {
             switch (requestCode) {
                 case REQUEST_TAKE_PHOTO:  //拍照
                     //注意，如果拍照的时候设置了MediaStore.EXTRA_OUTPUT，data.getData=null
-                    p2.setImageURI(Uri.fromFile(mSavePhotoFile));
-
-
+                   // p2.setImageURI(Uri.fromFile(mSavePhotoFile));
+                    isPai=true;
+                    Glide.with(YuYueActivity.this)
+                            .load(mSavePhotoFile)
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                           // .transform(new GlideCircleTransform(RenGongFuWuActivity.this,1, Color.parseColor("#ffffffff")))
+                            .into(p2);
                     break;
 
             }
@@ -574,7 +607,8 @@ public class YuYueActivity extends Activity {
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
                     final ShiBieBean zhaoPianBean=gson.fromJson(jsonObject,ShiBieBean.class);
-                    Log.d("YuYueActivity", "zhaoPianBean.getScore():" + zhaoPianBean.getScore());
+                    Log.d("YuYueActivity", ":" + zhaoPianBean.getFace_info_1().getBrightness());
+
                     if (zhaoPianBean.getScore()>=65.0) {
                         //比对成功
                         runOnUiThread(new Runnable() {
@@ -582,6 +616,8 @@ public class YuYueActivity extends Activity {
                             public void run() {
                                 xiangsidu.setText((zhaoPianBean.getScore()+"").substring(0,5));
                                 biduijieguo.setText("比对成功");
+
+
                             }
                         });
 
@@ -595,7 +631,6 @@ public class YuYueActivity extends Activity {
                                 biduijieguo.setText("比对失败");
                             }
                         });
-
 
                     }
 
@@ -611,7 +646,8 @@ public class YuYueActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            biduijieguo.setText("比对出错");
+                            biduijieguo.setText("人脸质量差");
+                            xiangsidu.setText("");
                         }
                     });
 
@@ -620,5 +656,25 @@ public class YuYueActivity extends Activity {
             }
         });
 
+    }
+
+    @Override
+    public void setP(int position) {
+        Glide.with(YuYueActivity.this).load(zhuji+"/upload/compare/"+ objectsBeanList.get(position).getScanPhoto()).asBitmap().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                if (tiJIaoDialog!=null){
+                    tiJIaoDialog.dismiss();
+                    tiJIaoDialog=null;
+                }
+                xuanZeDialog.dismiss();
+                xuanZeDialog=null;
+                String fn="yuyuezhao.jpg";
+                FileUtil.isExists(FileUtil.PATH,fn);
+                saveBitmap2File(resource.copy(Bitmap.Config.ARGB_8888,false), FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,100);
+                p1.setImageBitmap(resource);
+
+            }
+        });
     }
 }
