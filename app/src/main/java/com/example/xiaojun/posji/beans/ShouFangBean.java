@@ -22,7 +22,7 @@ public class ShouFangBean {
     private long modifyTime;
     private int pageNum;
     private int pageSize;
-    private int sid;
+    private Long sid;
 
     public long getCreateTime() {
         return createTime;
@@ -72,11 +72,11 @@ public class ShouFangBean {
         this.pageSize = pageSize;
     }
 
-    public int getSid() {
+    public Long getSid() {
         return sid;
     }
 
-    public void setSid(int sid) {
+    public void setSid(Long sid) {
         this.sid = sid;
     }
 }

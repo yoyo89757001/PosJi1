@@ -29,6 +29,7 @@ import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
+import com.example.xiaojun.posji.beans.ChuanSongBean;
 import com.example.xiaojun.posji.beans.JiuDianBean;
 import com.example.xiaojun.posji.beans.LogoBean;
 import com.example.xiaojun.posji.beans.ShiBieBean;
@@ -44,6 +45,8 @@ import com.google.zxing.common.BitMatrix;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.telpo.tps550.api.TelpoException;
 import com.telpo.tps550.api.printer.UsbThermalPrinter;
+
+import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -86,13 +89,14 @@ public class DaYingActivity extends Activity {
     private final int NOBLACKBLOCK = 15;
     private UsbThermalPrinter mUsbThermalPrinter = new UsbThermalPrinter(DaYingActivity.this);
     private Bitmap bitmap=null;
-    private String name=null,shoufangren=null,riqi=null;
-    private String id=null;
     public static final int TIMEOUT = 1000 * 60;
     private String zhuji=null;
-    private JiuDianBean jiudianbean=null;
     private BaoCunBeanDao baoCunBeanDao=null;
     private BaoCunBean baoCunBean=null;
+    private ChuanSongBean chuanSongBean=null;
+
+
+
 
     private class MyHandler extends Handler {
         @Override
@@ -169,17 +173,14 @@ public class DaYingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daying);
-
+        chuanSongBean= Parcels.unwrap(getIntent().getParcelableExtra("chuansong"));
         baoCunBeanDao= MyAppLaction.myAppLaction.getDaoSession().getBaoCunBeanDao();
         baoCunBean=baoCunBeanDao.load(123456L);
         if (baoCunBean!=null && baoCunBean.getZhuji()!=null){
             zhuji=baoCunBean.getZhuji();
         }
 
-        name=getIntent().getStringExtra("name");
-        shoufangren=getIntent().getStringExtra("shoufangren");
-        riqi=getIntent().getStringExtra("time");
-        id=getIntent().getStringExtra("idid");
+
 
         logo=(ImageView) findViewById(R.id.logo);
         t1= (TextView) findViewById(R.id.name);
@@ -191,7 +192,7 @@ public class DaYingActivity extends Activity {
         erweima= (ImageView) findViewById(R.id.erweima);
         Bitmap bitmap2 = null;
         try {
-            bitmap2 = CreateCode(id, BarcodeFormat.CODE_128, 316, 316);
+            bitmap2 = CreateCode(chuanSongBean.getId()+"", BarcodeFormat.CODE_128, 316, 316);
             erweima.setImageBitmap(bitmap2);
 
         } catch (WriterException e) {
@@ -199,15 +200,9 @@ public class DaYingActivity extends Activity {
 
         }
 
-        if (name!=null){
-            t1.setText(name);
-        }
-        if (riqi!=null){
-            t3.setText(riqi);
-        }
-        if (shoufangren!=null){
-            t4.setText(shoufangren);
-        }
+        t1.setText(chuanSongBean.getName());
+        t3.setText(chuanSongBean.getBeifangshijian());
+        t4.setText(chuanSongBean.getBeifangren());
 
 
         handler = new MyHandler();
@@ -246,6 +241,7 @@ public class DaYingActivity extends Activity {
                 finish();
             }
         });
+        link_tianqi3();
 
     }
 
@@ -372,7 +368,7 @@ public class DaYingActivity extends Activity {
                     @Override
                     public void run() {
 
-                        Toast tastyToast= TastyToast.makeText(DaYingActivity.this,"上传图片出错，请返回后重试！",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                        Toast tastyToast= TastyToast.makeText(DaYingActivity.this,"访问出错！",TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         tastyToast.setGravity(Gravity.CENTER,0,0);
                         tastyToast.show();
                     }

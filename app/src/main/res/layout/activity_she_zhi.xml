@@ -135,6 +135,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/banben"
             android:textColor="@color/sbc_header_text"
             android:textSize="18sp"
             android:text="V1.0.0"

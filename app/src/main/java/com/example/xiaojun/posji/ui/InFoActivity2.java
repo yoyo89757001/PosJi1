@@ -29,6 +29,7 @@ import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
+import com.example.xiaojun.posji.beans.ChuanSongBean;
 import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShiBieBean;
 import com.example.xiaojun.posji.beans.UserInfoBena;
@@ -46,6 +47,9 @@ import com.sdsmdg.tastytoast.TastyToast;
 import com.telpo.tps550.api.TelpoException;
 import com.telpo.tps550.api.idcard.IdCard;
 import com.telpo.tps550.api.idcard.IdentityInfo;
+
+import org.parceler.Parcels;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -626,10 +630,11 @@ public class InFoActivity2 extends Activity {
 
                     if (Long.parseLong(ss)>0){
 
-                        startActivity(new Intent(InFoActivity2.this,ShiYouActivity.class)
-                                .putExtra("name",name.getText().toString())
-                                .putExtra("biduijieguo",bidui)
-                                .putExtra("id",ss+""));
+                        ChuanSongBean bean=new ChuanSongBean(name.getText().toString(),1,Long.parseLong(ss),"","","","");
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("chuansong", Parcels.wrap(bean));
+                        startActivity(new Intent(InFoActivity2.this,ShiYouActivity.class).putExtras(bundle));
+
 
                     }else {
 

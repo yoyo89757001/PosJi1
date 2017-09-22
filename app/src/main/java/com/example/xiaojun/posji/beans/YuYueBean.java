@@ -145,7 +145,7 @@ public class YuYueBean {
         private long createTime;
         private int dtoResult;
         private int gender;
-        private int id;
+        private Long id;
         private String level;
         private long modifyTime;
         private String name;
@@ -244,11 +244,11 @@ public class YuYueBean {
             this.gender = gender;
         }
 
-        public int getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(Long id) {
             this.id = id;
         }
 

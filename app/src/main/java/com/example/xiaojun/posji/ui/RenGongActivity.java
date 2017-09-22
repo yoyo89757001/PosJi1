@@ -1,7 +1,10 @@
 package com.example.xiaojun.posji.ui;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,6 +22,7 @@ import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
+import com.example.xiaojun.posji.beans.ChuanSongBean;
 import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShouFangBean;
 import com.example.xiaojun.posji.dialog.JiaZaiDialog;
@@ -29,6 +33,7 @@ import com.example.xiaojun.posji.utils.GsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
+import org.parceler.Parcels;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +62,7 @@ public class RenGongActivity extends Activity {
     private JiaZaiDialog jiaZaiDialog=null;
     private Photos photos=null;
     private TiJIaoDialog tiJIaoDialog=null;
+    private SensorInfoReceiver sensorInfoReceiver;
 
 
     @Override
@@ -64,7 +70,7 @@ public class RenGongActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ren_gong);
 
-        String fn = "ddde.jpg";
+        String fn = "bbbb.jpg";
         FileUtil.isExists(FileUtil.PATH, fn);
         mSavePhotoFile=new File( FileUtil.SDPATH + File.separator + FileUtil.PATH + File.separator + fn);
         baoCunBeanDao= MyAppLaction.myAppLaction.getDaoSession().getBaoCunBeanDao();
@@ -77,9 +83,25 @@ public class RenGongActivity extends Activity {
             tastyToast.show();
         }
 
+        IntentFilter intentFilter1 = new IntentFilter();
+        intentFilter1.addAction("guanbi2");
+        sensorInfoReceiver = new SensorInfoReceiver();
+        registerReceiver(sensorInfoReceiver, intentFilter1);
+
         initView();
 
+    }
 
+    private class SensorInfoReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+            if (action.equals("guanbi2")){
+                finish();
+            }
+        }
     }
 
     private void initView() {
@@ -285,7 +307,18 @@ public class RenGongActivity extends Activity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(sensorInfoReceiver);
+    }
+
     private void link_save() {
+        if (tiJIaoDialog==null){
+            tiJIaoDialog=new TiJIaoDialog(RenGongActivity.this);
+            tiJIaoDialog.show();
+        }
+
         //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
         //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
         OkHttpClient okHttpClient= new OkHttpClient.Builder()
@@ -364,17 +397,12 @@ public class RenGongActivity extends Activity {
                     if (zhaoPianBean.getDtoResult()==0){
                         //   Log.d("DengJiActivity", "dddd");
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                        ChuanSongBean bean=new ChuanSongBean(name.getText().toString(),3,zhaoPianBean.getSid(),lfrdianhua.getText().toString().trim()
+                                ,beifangren.getText().toString().trim(),riqi.getText().toString().trim(),"");
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("chuansong", Parcels.wrap(bean));
+                        startActivity(new Intent(RenGongActivity.this,ShiYouActivity.class).putExtras(bundle));
 
-                                Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"预约成功！",TastyToast.LENGTH_LONG,TastyToast.INFO);
-                                tastyToast.setGravity(Gravity.CENTER,0,0);
-                                tastyToast.show();
-                                finish();
-
-                            }
-                        });
 //                        runOnUiThread(new Runnable() {
 //                            @Override
 //                            public void run() {

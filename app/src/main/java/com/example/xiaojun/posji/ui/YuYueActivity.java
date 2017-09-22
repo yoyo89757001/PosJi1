@@ -1,7 +1,10 @@
 package com.example.xiaojun.posji.ui;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -23,8 +26,13 @@ import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
+import com.example.xiaojun.posji.beans.ChuanSongBean;
+import com.example.xiaojun.posji.beans.DaYingXinXiBean;
+import com.example.xiaojun.posji.beans.DaYingXinXiBeanDao;
+import com.example.xiaojun.posji.beans.FanHuiBean;
 import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShiBieBean;
+import com.example.xiaojun.posji.beans.ShouFangBean;
 import com.example.xiaojun.posji.beans.UserInfoBena;
 import com.example.xiaojun.posji.beans.YuYueBean;
 import com.example.xiaojun.posji.beans.YuYueInterface;
@@ -37,6 +45,8 @@ import com.example.xiaojun.posji.utils.GsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
+
+import org.parceler.Parcels;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -73,7 +83,8 @@ public class YuYueActivity extends Activity implements YuYueInterface {
     private UserInfoBena userInfoBena=null;
     private XuanZeDialog xuanZeDialog=null;
     private boolean isPai=false;
-
+    private YuYueBean.ObjectsBean objectsBean=null;
+    private SensorInfoReceiver sensorInfoReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +92,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
         setContentView(R.layout.activity_yu_yue);
         baoCunBeanDao= MyAppLaction.myAppLaction.getDaoSession().getBaoCunBeanDao();
         baoCunBean=baoCunBeanDao.load(123456L);
+
         if (baoCunBean!=null && baoCunBean.getZhuji()!=null){
             zhuji=baoCunBean.getZhuji();
         }else {
@@ -89,13 +101,29 @@ public class YuYueActivity extends Activity implements YuYueInterface {
             tastyToast.show();
         }
         userInfoBena=new UserInfoBena();
+        IntentFilter intentFilter1 = new IntentFilter();
+        intentFilter1.addAction("guanbi2");
+        sensorInfoReceiver = new SensorInfoReceiver();
+        registerReceiver(sensorInfoReceiver, intentFilter1);
 
-        String fn = "xianchangzhao.jpg";
+        String fn = "bbbb.jpg";
         FileUtil.isExists(FileUtil.PATH, fn);
         mSavePhotoFile=new File( FileUtil.SDPATH + File.separator + FileUtil.PATH + File.separator + fn);
 
         initView();
     }
+
+    private class SensorInfoReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+            if (action.equals("guanbi2")) {
+                finish();
+
+            }
+        }}
 
     private void initView() {
         name= (EditText) findViewById(R.id.name);
@@ -210,7 +238,10 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                         YuYueBean yuYueBean=gson.fromJson(jsonObject,YuYueBean.class);
                         objectsBeanList=yuYueBean.getObjects();
                         int size=objectsBeanList.size();
-                        if (size>0 && size==1){
+                        if (size==1){
+
+                            objectsBean=objectsBeanList.get(0);
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -230,7 +261,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                                 }
                             });
 
-                        }else {
+                        }else if (size>1){
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -242,6 +273,20 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                             });
 
 
+                        }else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (tiJIaoDialog!=null){
+                                        tiJIaoDialog.dismiss();
+                                        tiJIaoDialog=null;
+                                    }
+                                    Toast tastyToast = TastyToast.makeText(YuYueActivity.this, "没有查询到数据", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                                    tastyToast.setGravity(Gravity.CENTER, 0, 0);
+                                    tastyToast.show();
+
+                                }
+                            });
                         }
 
 
@@ -255,7 +300,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                             @Override
                             public void run() {
 
-                                Toast tastyToast = TastyToast.makeText(YuYueActivity.this, "查询失败,请检查网络", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                                Toast tastyToast = TastyToast.makeText(YuYueActivity.this, "查询失败...", TastyToast.LENGTH_LONG, TastyToast.ERROR);
                                 tastyToast.setGravity(Gravity.CENTER, 0, 0);
                                 tastyToast.show();
 
@@ -603,7 +648,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                     ResponseBody body = response.body();
                     // Log.d("AllConnects", "识别结果返回"+response.body().string());
                     String ss=body.string();
-                    Log.d("InFoActivity", ss);
+                   // Log.d("InFoActivity", ss);
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
                     final ShiBieBean zhaoPianBean=gson.fromJson(jsonObject,ShiBieBean.class);
@@ -614,21 +659,27 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                xiayibu.setEnabled(false);
                                 xiangsidu.setText((zhaoPianBean.getScore()+"").substring(0,5));
                                 biduijieguo.setText("比对成功");
-
+                                link_shenghe();
 
                             }
                         });
 
 
                     }else {
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                xiayibu.setFocusable(false);
+
                                 xiangsidu.setText((zhaoPianBean.getScore()+"").substring(0,5));
                                 biduijieguo.setText("比对失败");
+
+                                Toast tastyToast= TastyToast.makeText(YuYueActivity.this,"比对失败了,请重试！",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                                tastyToast.setGravity(Gravity.CENTER,0,0);
+                                tastyToast.show();
                             }
                         });
 
@@ -648,6 +699,9 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                         public void run() {
                             biduijieguo.setText("人脸质量差");
                             xiangsidu.setText("");
+                            Toast tastyToast= TastyToast.makeText(YuYueActivity.this,"比对失败了,人脸质量差！",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                            tastyToast.setGravity(Gravity.CENTER,0,0);
+                            tastyToast.show();
                         }
                     });
 
@@ -659,7 +713,10 @@ public class YuYueActivity extends Activity implements YuYueInterface {
     }
 
     @Override
-    public void setP(int position) {
+    public void setP( int position) {
+
+        objectsBean=objectsBeanList.get(position);
+
         Glide.with(YuYueActivity.this).load(zhuji+"/upload/compare/"+ objectsBeanList.get(position).getScanPhoto()).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -667,6 +724,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                     tiJIaoDialog.dismiss();
                     tiJIaoDialog=null;
                 }
+
                 xuanZeDialog.dismiss();
                 xuanZeDialog=null;
                 String fn="yuyuezhao.jpg";
@@ -676,5 +734,129 @@ public class YuYueActivity extends Activity implements YuYueInterface {
 
             }
         });
+    }
+
+
+    private void link_shenghe() {
+
+        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
+        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
+
+//    /* form的分割线,自己定义 */
+//        String boundary = "xx--------------------------------------------------------------xx";
+        RequestBody body = new FormBody.Builder()
+                .add("audit","1")
+                .add("accountId",baoCunBean.getZhangHuID())
+                .add("reason","默认POS机审核")
+                .add("id",objectsBean.getId()+"")
+                .build();
+
+
+        Request.Builder requestBuilder = new Request.Builder()
+                // .header("Content-Type", "application/json")
+                .post(body)
+                .url(zhuji + "/iauditVisitor.do");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        xiayibu.setEnabled(true);
+                        if (tiJIaoDialog!=null){
+                            tiJIaoDialog.dismiss();
+                            tiJIaoDialog=null;
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        xiayibu.setEnabled(true);
+                        if (tiJIaoDialog!=null){
+                            tiJIaoDialog.dismiss();
+                            tiJIaoDialog=null;
+                        }
+                    }
+                });
+                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                //获得返回体
+                try {
+
+                    ResponseBody body = response.body();
+                    String ss=body.string().trim();
+                  //  Log.d("DengJiActivity", ss);
+
+                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson=new Gson();
+                    FanHuiBean fanHuiBean=gson.fromJson(jsonObject,FanHuiBean.class);
+
+                    if (fanHuiBean.getDtoResult()==0){
+                        ChuanSongBean bean=new ChuanSongBean(name.getText().toString(),2,objectsBean.getId(),objectsBean.getPhone()
+                                ,objectsBean.getVisitPerson(),DateUtils.timet2(objectsBean.getVisitDate()+""),"");
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("chuansong", Parcels.wrap(bean));
+                        startActivity(new Intent(YuYueActivity.this,ShiYouActivity.class).putExtras(bundle));
+
+                    }else {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Toast tastyToast= TastyToast.makeText(YuYueActivity.this,"审核失败",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                                tastyToast.setGravity(Gravity.CENTER,0,0);
+                                tastyToast.show();
+
+                            }
+                        });
+
+                    }
+
+                }catch (Exception e){
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            xiayibu.setEnabled(true);
+                            if (tiJIaoDialog!=null){
+                                tiJIaoDialog.dismiss();
+                                tiJIaoDialog=null;
+                            }
+                            Toast tastyToast= TastyToast.makeText(YuYueActivity.this,"提交失败,请检查网络",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                            tastyToast.setGravity(Gravity.CENTER,0,0);
+                            tastyToast.show();
+                        }
+                    });
+                    Log.d("WebsocketPushMsg", e.getMessage());
+                }
+            }
+        });
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(sensorInfoReceiver);
     }
 }

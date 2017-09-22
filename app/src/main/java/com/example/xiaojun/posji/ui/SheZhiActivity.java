@@ -3,6 +3,8 @@ package com.example.xiaojun.posji.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -55,7 +57,7 @@ public class SheZhiActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_she_zhi);
       //  Log.d("SheZhiActivity", getSerialNumber());
-        Log.d("SheZhiActivity", getIMEI(SheZhiActivity.this));
+    //    Log.d("SheZhiActivity", getIMEI(SheZhiActivity.this));
        // Log.d("SheZhiActivity", getIMSI(SheZhiActivity.this));
 
         baoCunBeanDao= MyAppLaction.myAppLaction.getDaoSession().getBaoCunBeanDao();
@@ -351,6 +353,27 @@ public class SheZhiActivity extends Activity {
             }
         });
 
+        TextView banben= (TextView) findViewById(R.id.banben);
+        banben.setText("V"+getVersionName(SheZhiActivity.this));
+    }
 
+    /**
+     * 获取版本号
+     * @param context 上下文
+     * @return 版本号
+     */
+    public  String getVersionName(Context context){
+        //获取包管理器
+        PackageManager pm = context.getPackageManager();
+        //获取包信息
+        try {
+            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(),0);
+            return  packageInfo.versionName;
+            //返回版本号
+            //  return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "1.0.0";
     }
 }
