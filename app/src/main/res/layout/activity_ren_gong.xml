@@ -8,7 +8,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/jiemian"
-        android:background="#EAEAEA"
+        android:background="#f4ffffff"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
@@ -284,7 +284,7 @@
             android:layout_marginTop="10dp">
 
             <Button
-                android:text="确     定"
+                android:text="提      交"
                 android:textSize="14sp"
                 android:id="@+id/wancheng"
                 android:layout_marginRight="20dp"

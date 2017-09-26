@@ -33,6 +33,7 @@ import com.example.xiaojun.posji.beans.ChuanSongBean;
 import com.example.xiaojun.posji.beans.JiuDianBean;
 import com.example.xiaojun.posji.beans.LogoBean;
 import com.example.xiaojun.posji.beans.ShiBieBean;
+import com.example.xiaojun.posji.dialog.TiJIaoDialog;
 import com.example.xiaojun.posji.utils.GsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -94,7 +95,7 @@ public class DaYingActivity extends Activity {
     private BaoCunBeanDao baoCunBeanDao=null;
     private BaoCunBean baoCunBean=null;
     private ChuanSongBean chuanSongBean=null;
-
+    private String tiaoma=System.currentTimeMillis()+"";
 
 
 
@@ -180,8 +181,6 @@ public class DaYingActivity extends Activity {
             zhuji=baoCunBean.getZhuji();
         }
 
-
-
         logo=(ImageView) findViewById(R.id.logo);
         t1= (TextView) findViewById(R.id.name);
         t2= (TextView) findViewById(R.id.danwei);
@@ -192,7 +191,8 @@ public class DaYingActivity extends Activity {
         erweima= (ImageView) findViewById(R.id.erweima);
         Bitmap bitmap2 = null;
         try {
-            bitmap2 = CreateCode(chuanSongBean.getId()+"", BarcodeFormat.CODE_128, 316, 316);
+            //http://localhost:8081/gapp/finishVisit.html?id=数据id&accountId=账号id
+            bitmap2 = CreateCode(baoCunBean.getZhuji()+"/gapp/finishVisit.html?id="+chuanSongBean.getId()+"&accountId="+baoCunBean.getZhangHuID(), BarcodeFormat.QR_CODE, 316, 316);
             erweima.setImageBitmap(bitmap2);
 
         } catch (WriterException e) {
@@ -215,7 +215,7 @@ public class DaYingActivity extends Activity {
               bitmap = createViewBitmap(baocun);
 
                 new printPicture().start();
-
+                //link_save();
             }
         });
         new Thread(new Runnable() {
@@ -409,6 +409,70 @@ public class DaYingActivity extends Activity {
                 }
             }
         });
+
+    }
+
+    private void link_save() {
+
+        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
+
+//    /* form的分割线,自己定义 */
+//        String boundary = "xx--------------------------------------------------------------xx";
+        RequestBody body=null;
+        try {
+
+            body = new FormBody.Builder()
+                    .add("codeNum",tiaoma)
+                    .add("accountId",baoCunBean.getZhangHuID())
+                    .build();
+
+
+            Request.Builder requestBuilder = new Request.Builder()
+                    // .header("Content-Type", "application/json")
+                    .post(body)
+                    .url(zhuji + "/addCodeEntity.do");
+
+
+            // step 3：创建 Call 对象
+            Call call = okHttpClient.newCall(requestBuilder.build());
+
+            //step 4: 开始异步请求
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d("AllConnects", "请求识别失败"+e.getMessage());
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+
+                    Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                    //获得返回体
+                    try {
+
+                        ResponseBody body = response.body();
+                        String ss=body.string().trim();
+                        Log.d("InFoActivity", ss);
+
+
+
+                    }catch (Exception e){
+
+                        Log.d("WebsocketPushMsg", e.getMessage());
+                    }
+                }
+            });
+
+        }catch (NullPointerException e){
+            Log.d("InFoActivity2", e.getMessage());
+        }
 
     }
 }

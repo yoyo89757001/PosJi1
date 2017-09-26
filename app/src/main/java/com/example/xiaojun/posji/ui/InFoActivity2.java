@@ -143,7 +143,7 @@ public class InFoActivity2 extends Activity {
         if (baoCunBean!=null && baoCunBean.getZhuji()!=null){
             zhuji=baoCunBean.getZhuji();
         }else {
-            Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"无法连接读卡器",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+            Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"请先设置主机地址",TastyToast.LENGTH_LONG,TastyToast.ERROR);
             tastyToast.setGravity(Gravity.CENTER,0,0);
             tastyToast.show();
         }
@@ -160,7 +160,6 @@ public class InFoActivity2 extends Activity {
             public void run() {
                 try {
                     IdCard.open(InFoActivity2.this);
-
                     startReadCard();
                 } catch (TelpoException e) {
                     e.printStackTrace();
@@ -184,10 +183,7 @@ public class InFoActivity2 extends Activity {
         sensorInfoReceiver = new SensorInfoReceiver();
         registerReceiver(sensorInfoReceiver, intentFilter1);
 
-
-
         userInfoBena=new UserInfoBena();
-
 
         ImageView imageView= (ImageView) findViewById(R.id.dd);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -232,7 +228,6 @@ public class InFoActivity2 extends Activity {
                         }
 
                     }
-
 
                 }
             }

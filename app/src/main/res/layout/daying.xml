@@ -33,6 +33,7 @@
         android:layout_width="80dp"
         android:layout_marginTop="10dp"
         android:id="@+id/logo"
+        android:src="@drawable/zhongguodianxin"
         android:layout_gravity="center_horizontal"
         android:layout_height="30dp" />
 
@@ -260,8 +261,8 @@
             android:layout_marginTop="20dp"
             android:background="@color/CLEAR"
             android:layout_gravity="center_horizontal"
-            android:layout_width="150dp"
-            android:layout_height="50dp" />
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
 
         <TextView
             android:textSize="10sp"
@@ -270,7 +271,7 @@
             android:textColor="@color/blake"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="6dp"
-            android:text="请妥善保管,离开前请交回前台"
+            android:text="请扫描二维码,结束来访!"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

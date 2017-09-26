@@ -185,7 +185,7 @@ public class DateUtils {
         @SuppressWarnings("unused")
         long lcc = Long.valueOf(time);
         // int i = Integer.parseInt(time);
-        String times = sdr.format(new Date(lcc ));
+        String times = sdr.format(new Date(lcc));
         return times;
 
     }

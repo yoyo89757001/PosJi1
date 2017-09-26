@@ -42,6 +42,7 @@ import com.example.xiaojun.posji.dialog.XuanZeDialog;
 import com.example.xiaojun.posji.utils.DateUtils;
 import com.example.xiaojun.posji.utils.FileUtil;
 import com.example.xiaojun.posji.utils.GsonUtil;
+import com.example.xiaojun.posji.utils.ImageUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
@@ -239,29 +240,27 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                         objectsBeanList=yuYueBean.getObjects();
                         int size=objectsBeanList.size();
                         if (size==1){
-
                             objectsBean=objectsBeanList.get(0);
-
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+
                                     Glide.with(YuYueActivity.this).load(zhuji+"/upload/compare/"+ objectsBeanList.get(0).getScanPhoto()).asBitmap().into(new SimpleTarget<Bitmap>() {
                                         @Override
-                                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                            if (tiJIaoDialog!=null){
-                                                tiJIaoDialog.dismiss();
-                                                tiJIaoDialog=null;
-                                            }
-                                            String fn="yuyuezhao.jpg";
+                                        public void onResourceReady(final Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+
+
+                                            final String fn="yuyuezhao.jpg";
                                             FileUtil.isExists(FileUtil.PATH,fn);
                                             saveBitmap2File(resource.copy(Bitmap.Config.ARGB_8888,false), FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,100);
-                                            p1.setImageBitmap(resource);
+
                                         }
                                     });
                                 }
                             });
 
                         }else if (size>1){
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -274,6 +273,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
 
 
                         }else {
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -281,6 +281,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                                         tiJIaoDialog.dismiss();
                                         tiJIaoDialog=null;
                                     }
+
                                     Toast tastyToast = TastyToast.makeText(YuYueActivity.this, "没有查询到数据", TastyToast.LENGTH_LONG, TastyToast.ERROR);
                                     tastyToast.setGravity(Gravity.CENTER, 0, 0);
                                     tastyToast.show();
@@ -376,7 +377,11 @@ public class YuYueActivity extends Activity implements YuYueInterface {
             bos.flush();
             bos.close();
             shengfenzhengPath=path;
-
+            p1.setImageBitmap(ImageUtil.decodeSampledBitmapFromFilePath(shengfenzhengPath,260,260));
+            if (tiJIaoDialog!=null){
+                tiJIaoDialog.dismiss();
+                tiJIaoDialog=null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -719,18 +724,15 @@ public class YuYueActivity extends Activity implements YuYueInterface {
 
         Glide.with(YuYueActivity.this).load(zhuji+"/upload/compare/"+ objectsBeanList.get(position).getScanPhoto()).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
-            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                if (tiJIaoDialog!=null){
-                    tiJIaoDialog.dismiss();
-                    tiJIaoDialog=null;
-                }
+            public void onResourceReady(final Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
 
                 xuanZeDialog.dismiss();
                 xuanZeDialog=null;
+
                 String fn="yuyuezhao.jpg";
                 FileUtil.isExists(FileUtil.PATH,fn);
                 saveBitmap2File(resource.copy(Bitmap.Config.ARGB_8888,false), FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,100);
-                p1.setImageBitmap(resource);
+
 
             }
         });

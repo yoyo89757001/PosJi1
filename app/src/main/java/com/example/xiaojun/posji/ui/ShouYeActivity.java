@@ -20,7 +20,6 @@ import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
-import com.example.xiaojun.posji.beans.JiuDianBean;
 import com.example.xiaojun.posji.beans.LogoBean;
 import com.example.xiaojun.posji.utils.GsonUtil;
 import com.google.gson.Gson;
@@ -74,8 +73,10 @@ public class ShouYeActivity extends Activity implements View.OnClickListener {
 
             }
         });
-        if (baoCunBean!=null && baoCunBean.getZhangHuID()!=null)
-        link_tianqi3();
+        if (baoCunBean!=null && baoCunBean.getZhangHuID()!=null){
+            link_tianqi3();
+        }
+
 
     }
 

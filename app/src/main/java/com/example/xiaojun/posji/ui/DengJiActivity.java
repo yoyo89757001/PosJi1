@@ -288,13 +288,14 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
                 .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(true)
                 .build();
-
+      //  Log.d("DengJiActivity", "chuanSongBean.getId():" + chuanSongBean.getId());
 
 //    /* form的分割线,自己定义 */
 //        String boundary = "xx--------------------------------------------------------------xx";
         RequestBody body = new FormBody.Builder()
                 .add("id",chuanSongBean.getId()+"")
                 .add("visitIncident",chuanSongBean.getShiyou())
+                .add("accountId",baoCunBean.getZhangHuID())
                 .add("visitDate2",riqi_tv.getText().toString().trim())
                 .add("visitDepartment",bumen_ET.getText().toString().trim()+"")
                 .add("visitPerson",shoufangren.getText().toString().trim()+"")

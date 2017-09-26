@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">人证比对系统</string>
+    <string name="app_name">智能楼宇来访系统</string>
     <string name="title_activity_photo_viewer">Photo Viewer</string>
     <string name="idcard_zwxx">指纹信息：</string>
     <string name="idcard_ysmz">右手拇指</string>

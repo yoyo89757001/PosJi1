@@ -15,7 +15,7 @@
 
         <TextView
             android:id="@+id/title2"
-            android:text="选择预约人"
+            android:text="点击选择预约人"
             android:textSize="18sp"
             android:gravity="center"
             android:layout_marginTop="10dp"

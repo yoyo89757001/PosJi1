@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,6 +31,7 @@ import com.example.xiaojun.posji.dialog.TiJIaoDialog;
 import com.example.xiaojun.posji.utils.DateUtils;
 import com.example.xiaojun.posji.utils.FileUtil;
 import com.example.xiaojun.posji.utils.GsonUtil;
+import com.example.xiaojun.posji.view.GlideCircleTransform;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
@@ -282,7 +284,7 @@ public class RenGongActivity extends Activity {
                                     .load(mSavePhotoFile)
                                     .skipMemoryCache(true)
                                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                    // .transform(new GlideCircleTransform(RenGongFuWuActivity.this,1, Color.parseColor("#ffffffff")))
+                                    .transform(new GlideCircleTransform(RenGongActivity.this,1, Color.parseColor("#ffffffff")))
                                     .into(paizhao);
                         }
                     });

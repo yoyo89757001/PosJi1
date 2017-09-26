@@ -326,7 +326,7 @@ public class SheZhiActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast tastyToast= TastyToast.makeText(SheZhiActivity.this,fanHuiBean.getDtoDesc(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                            Toast tastyToast= TastyToast.makeText(SheZhiActivity.this,fanHuiBean.getDtoDesc(),TastyToast.LENGTH_LONG,TastyToast.INFO);
                             tastyToast.setGravity(Gravity.CENTER,0,0);
                             tastyToast.show();
 
