@@ -67,7 +67,7 @@ import okhttp3.ResponseBody;
 public class DaYingActivity extends Activity {
     private LinearLayout baocun;
     private Button dayin;
-    private TextView t1,t2,t3,t4,t5;
+    private TextView t1,t2,t3,t4;
     private EditText beizhu;
     private ImageView erweima,logo;
     private String Result;
@@ -186,7 +186,7 @@ public class DaYingActivity extends Activity {
         t2= (TextView) findViewById(R.id.danwei);
         t3= (TextView) findViewById(R.id.riqi);
         t4= (TextView) findViewById(R.id.beifangren);
-        t5= (TextView) findViewById(R.id.bianha);
+      //  t5= (TextView) findViewById(R.id.bianha);
         beizhu= (EditText) findViewById(R.id.beizhu);
         erweima= (ImageView) findViewById(R.id.erweima);
         Bitmap bitmap2 = null;

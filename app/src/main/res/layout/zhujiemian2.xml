@@ -136,7 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
-                    android:text="姓别:"
+                    android:text="性别:"
                     android:textColor="@color/write"
                     android:textSize="12sp" />
 
@@ -166,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
-                    android:text="名族:"
+                    android:text="民族:"
                     android:textColor="@color/write"
                     android:textSize="12sp" />
 
@@ -315,6 +315,7 @@
                 android:layout_width="match_parent"
 
                 android:layout_height="0dp"
+                android:visibility="gone"
                 android:layout_weight="0.8"
                 android:orientation="horizontal">
 
