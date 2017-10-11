@@ -65,6 +65,7 @@ public class RenGongActivity extends Activity {
     private Photos photos=null;
     private TiJIaoDialog tiJIaoDialog=null;
     private SensorInfoReceiver sensorInfoReceiver;
+    private boolean isTiJiao=false;
 
 
     @Override
@@ -129,7 +130,20 @@ public class RenGongActivity extends Activity {
                     tastyToast.show();
 
                 }else {
-                    link_save();
+
+                    try {
+                        if (isTiJiao){
+                            link_save();
+                        }else {
+                            Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"人脸质量太低，请重新拍摄",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                            tastyToast.setGravity(Gravity.CENTER,0,0);
+                            tastyToast.show();
+                        }
+
+                    }catch (Exception e){
+                        Log.d("RenGongActivity", e.getMessage()+"");
+                    }
+
                 }
 
             }
@@ -162,8 +176,12 @@ public class RenGongActivity extends Activity {
                 case REQUEST_TAKE_PHOTO:  //拍照
                     //注意，如果拍照的时候设置了MediaStore.EXTRA_OUTPUT，data.getData=null
                    // paizhao.setImageURI(Uri.fromFile(mSavePhotoFile));
+                    try {
+                        link_P2();
+                    }catch (Exception e){
+                        Log.d("RenGongActivity", e.getMessage()+"");
+                    }
 
-                    link_P2();
 
                     break;
 
@@ -277,9 +295,13 @@ public class RenGongActivity extends Activity {
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
                     photos= gson.fromJson(jsonObject,Photos.class);
+
+
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            link_zhiliang();
                             Glide.with(RenGongActivity.this)
                                     .load(mSavePhotoFile)
                                     .skipMemoryCache(true)
@@ -436,6 +458,124 @@ public class RenGongActivity extends Activity {
                         });
 
 
+                    }
+
+                }catch (Exception e){
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (tiJIaoDialog!=null){
+                                tiJIaoDialog.dismiss();
+                                tiJIaoDialog=null;
+                            }
+                        }
+                    });
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"提交失败,请检查网络",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                            tastyToast.setGravity(Gravity.CENTER,0,0);
+                            tastyToast.show();
+
+                        }
+                    });
+                    Log.d("WebsocketPushMsg", e.getMessage());
+                }
+            }
+        });
+
+
+    }
+
+    private void link_zhiliang() {
+        if (tiJIaoDialog==null){
+            tiJIaoDialog=new TiJIaoDialog(RenGongActivity.this);
+            tiJIaoDialog.show();
+        }
+
+        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
+        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
+
+//    /* form的分割线,自己定义 */
+//        String boundary = "xx--------------------------------------------------------------xx";
+        RequestBody body = new FormBody.Builder()
+                .add("scanPhoto",photos.getExDesc())
+                .add("accountId",baoCunBean.getZhangHuID())
+                .build();
+
+
+        Request.Builder requestBuilder = new Request.Builder()
+                // .header("Content-Type", "application/json")
+                .post(body)
+                .url(zhuji + "/faceQuality.do");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (tiJIaoDialog!=null){
+                            tiJIaoDialog.dismiss();
+                            tiJIaoDialog=null;
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (tiJIaoDialog!=null){
+                            tiJIaoDialog.dismiss();
+                            tiJIaoDialog=null;
+                        }
+                    }
+                });
+                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                //获得返回体
+                try {
+
+                    ResponseBody body = response.body();
+                    String ss=body.string().trim();
+                    Log.d("DengJiActivity", ss);
+
+                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson=new Gson();
+                    ShouFangBean zhaoPianBean=gson.fromJson(jsonObject,ShouFangBean.class);
+
+                    if (zhaoPianBean.getDtoResult()!=0){
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"人脸质量太低!请重新拍照",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                                tastyToast.setGravity(Gravity.CENTER,0,0);
+                                tastyToast.show();
+
+                            }
+                        });
+
+                    }else {
+                        isTiJiao=true;
                     }
 
                 }catch (Exception e){
