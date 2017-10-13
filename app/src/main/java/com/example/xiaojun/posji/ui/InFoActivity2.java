@@ -32,6 +32,7 @@ import com.example.xiaojun.posji.beans.BaoCunBeanDao;
 import com.example.xiaojun.posji.beans.ChuanSongBean;
 import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShiBieBean;
+import com.example.xiaojun.posji.beans.ShouFangBean;
 import com.example.xiaojun.posji.beans.UserInfoBena;
 import com.example.xiaojun.posji.dialog.JiaZaiDialog;
 import com.example.xiaojun.posji.dialog.QueRenDialog;
@@ -117,6 +118,7 @@ public class InFoActivity2 extends Activity {
     private  String zhuji=null;
     private BaoCunBeanDao baoCunBeanDao=null;
     private BaoCunBean baoCunBean=null;
+    private boolean isTiJiao=false;
 
 
     private Handler mHandler = new Handler() {
@@ -271,25 +273,18 @@ public class InFoActivity2 extends Activity {
                 if (!userInfoBena.getCertNumber().equals("")){
                     try {
                         if (bidui){
-                            link_save();
-                        }else {
-                            final QueRenDialog dialog=new QueRenDialog(InFoActivity2.this,"比对不通过,你确定要进行下一步");
-                            dialog.setOnPositiveListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    link_save();
-                                    dialog.dismiss();
-                                }
-                            });
-                            dialog.setOnQuXiaoListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                    finish();
+                            if (isTiJiao){
+                                link_save();
+                            }else {
+                                Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"入库质量未达到要求,请拍正面照，并注意光线!",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                                tastyToast.setGravity(Gravity.CENTER,0,0);
+                                tastyToast.show();
+                            }
 
-                                }
-                            });
-                            dialog.show();
+                        }else {
+                            Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"比对未通过,请重新验证!",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                            tastyToast.setGravity(Gravity.CENTER,0,0);
+                            tastyToast.show();
                         }
 
 
@@ -339,6 +334,8 @@ public class InFoActivity2 extends Activity {
 
                 Bitmap bitmap= BitmapFactory.decodeFile(FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+"bbbb.jpg");
                 xianchengzhao.setImageBitmap(bitmap);
+                link_zhiliang();
+
             }
             if (action.equals("guanbi2")){
                 finish();
@@ -715,9 +712,6 @@ public class InFoActivity2 extends Activity {
 //            }
 //        });
 //    }
-
-
-
 //        Thread thread=  new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -1181,6 +1175,134 @@ public class InFoActivity2 extends Activity {
                 }
             }
         });
+
+    }
+
+    private void link_zhiliang() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (tiJIaoDialog==null && !InFoActivity2.this.isFinishing()){
+                    tiJIaoDialog=new TiJIaoDialog(InFoActivity2.this);
+                    tiJIaoDialog.show();
+                }
+            }
+        });
+
+
+        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
+        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
+
+//    /* form的分割线,自己定义 */
+//        String boundary = "xx--------------------------------------------------------------xx";
+        RequestBody body = new FormBody.Builder()
+                .add("scanPhoto",userInfoBena.getScanPhoto())
+                .add("accountId",baoCunBean.getZhangHuID())
+                .build();
+
+
+        Request.Builder requestBuilder = new Request.Builder()
+                // .header("Content-Type", "application/json")
+                .post(body)
+                .url(zhuji + "/faceQuality.do");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (tiJIaoDialog!=null){
+                            tiJIaoDialog.dismiss();
+                            tiJIaoDialog=null;
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (tiJIaoDialog!=null){
+                            tiJIaoDialog.dismiss();
+                            tiJIaoDialog=null;
+                        }
+                    }
+                });
+                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                //获得返回体
+                try {
+
+                    ResponseBody body = response.body();
+                    String ss=body.string().trim();
+                    Log.d("DengJiActivity", ss);
+
+                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson=new Gson();
+                    ShouFangBean zhaoPianBean=gson.fromJson(jsonObject,ShouFangBean.class);
+
+                    if (zhaoPianBean.getDtoResult()!=0){
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (!InFoActivity2.this.isFinishing()){
+                                    Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"人脸质量太低!请重新拍照",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                                    tastyToast.setGravity(Gravity.CENTER,0,0);
+                                    tastyToast.show();
+                                }
+
+
+                            }
+                        });
+
+                    }else {
+
+                        isTiJiao=true;
+                    }
+
+                }catch (Exception e){
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (tiJIaoDialog!=null){
+                                tiJIaoDialog.dismiss();
+                                tiJIaoDialog=null;
+                            }
+                        }
+                    });
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"提交失败,请检查网络",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                            tastyToast.setGravity(Gravity.CENTER,0,0);
+                            tastyToast.show();
+
+                        }
+                    });
+                    Log.d("WebsocketPushMsg", e.getMessage());
+                }
+            }
+        });
+
 
     }
 

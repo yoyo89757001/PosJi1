@@ -26,15 +26,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
-
 import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
-import com.example.xiaojun.posji.beans.JiuDianBean;
 import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShiBieBean;
 import com.example.xiaojun.posji.beans.UserInfoBena;
@@ -46,7 +41,6 @@ import com.example.xiaojun.posji.utils.GsonUtil;
 import com.example.xiaojun.posji.view.AutoFitTextureView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.google.zxing.other.BeepManager;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.telpo.tps550.api.TelpoException;
@@ -58,14 +52,12 @@ import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -193,16 +185,12 @@ public class InFoActivity3 extends Activity {
             tastyToast.show();
         }
 
-
         isTrue3=true;
         isTrue4=true;
-
-
 
         String fn = "bbbb.jpg";
         FileUtil.isExists(FileUtil.PATH, fn);
         mSavePhotoFile=new File( FileUtil.SDPATH + File.separator + FileUtil.PATH + File.separator + fn);
-
 
         beepManager = new BeepManager(this, R.raw.beep);
         new Thread(new Runnable() {
@@ -228,7 +216,6 @@ public class InFoActivity3 extends Activity {
                 }
             }
         }).start();
-
 
 
         IntentFilter intentFilter1 = new IntentFilter();
@@ -285,7 +272,6 @@ public class InFoActivity3 extends Activity {
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-
 
                 return true;
             }
