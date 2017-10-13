@@ -178,7 +178,6 @@ public class InFoActivity2 extends Activity {
         }).start();
 
 
-
         IntentFilter intentFilter1 = new IntentFilter();
         intentFilter1.addAction("guanbi");
         intentFilter1.addAction("guanbi2");
