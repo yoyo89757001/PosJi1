@@ -1263,7 +1263,7 @@ public class InFoActivity2 extends Activity {
                             public void run() {
 
                                 if (!InFoActivity2.this.isFinishing()){
-                                    Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"人脸质量未符合入库要求!",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                                    Toast tastyToast= TastyToast.makeText(InFoActivity2.this,"照片质量不符合入库要求,请拍正面照!",TastyToast.LENGTH_LONG,TastyToast.ERROR);
                                     tastyToast.setGravity(Gravity.CENTER,0,0);
                                     tastyToast.show();
                                 }
