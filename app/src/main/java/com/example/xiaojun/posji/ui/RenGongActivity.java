@@ -567,7 +567,7 @@ public class RenGongActivity extends Activity {
                             @Override
                             public void run() {
 
-                                Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"人脸质量太低!请重新拍照",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                                Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"人脸质量不符合入库要求",TastyToast.LENGTH_LONG,TastyToast.ERROR);
                                 tastyToast.setGravity(Gravity.CENTER,0,0);
                                 tastyToast.show();
 
