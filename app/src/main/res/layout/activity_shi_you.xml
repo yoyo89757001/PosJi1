@@ -11,7 +11,7 @@
         android:text="来访事由"
         android:layout_marginTop="40dp"
         android:textSize="26sp"
-        android:id="@+id/dddd"
+        android:id="@+id/www"
 
         android:layout_centerHorizontal="true"
         android:textColor="@color/write"
@@ -19,7 +19,7 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_below="@+id/dddd"
+        android:layout_below="@+id/www"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="140dp"
         android:layout_width="match_parent"
