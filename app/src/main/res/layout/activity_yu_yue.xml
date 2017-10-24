@@ -18,7 +18,6 @@
             android:layout_height="wrap_content" />
 
 
-
     <LinearLayout
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
@@ -114,8 +113,8 @@
 
                 <ImageView
                     android:id="@+id/zhengjian"
-                    android:layout_width="160dp"
                     android:scaleType="fitXY"
+                    android:layout_width="160dp"
                     android:layout_height="160dp"
                     android:background="@drawable/zidonghuoqu5" />
 

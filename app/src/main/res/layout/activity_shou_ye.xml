@@ -9,7 +9,6 @@
     android:layout_width="170dp"
     android:layout_marginTop="26dp"
     android:id="@+id/d1"
-    android:src="@drawable/logo"
     android:layout_centerHorizontal="true"
     android:layout_height="54dp" />
 

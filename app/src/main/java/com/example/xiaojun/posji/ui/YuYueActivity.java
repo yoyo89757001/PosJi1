@@ -26,6 +26,7 @@ import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
+import com.example.xiaojun.posji.beans.BiDuiFanHui;
 import com.example.xiaojun.posji.beans.ChuanSongBean;
 import com.example.xiaojun.posji.beans.DaYingXinXiBean;
 import com.example.xiaojun.posji.beans.DaYingXinXiBeanDao;
@@ -250,10 +251,9 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                                         @Override
                                         public void onResourceReady(final Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
 
-
                                             final String fn="yuyuezhao.jpg";
                                             FileUtil.isExists(FileUtil.PATH,fn);
-                                            saveBitmap2File(resource.copy(Bitmap.Config.ARGB_8888,false), FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,100);
+                                            saveBitmap2File(resource, FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,80);
 
                                         }
                                     });
@@ -378,7 +378,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
             bos.flush();
             bos.close();
             shengfenzhengPath=path;
-            p1.setImageBitmap(ImageUtil.decodeSampledBitmapFromFilePath(shengfenzhengPath,260,260));
+
             if (tiJIaoDialog!=null){
                 tiJIaoDialog.dismiss();
                 tiJIaoDialog=null;
@@ -392,6 +392,9 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                 bm.recycle();
             }
             bm = null;
+            Log.d("YuYueActivity", "执行");
+            if (shengfenzhengPath!=null)
+            p1.setImageBitmap(ImageUtil.decodeSampledBitmapFromFilePath(shengfenzhengPath,280,280));
         }
     }
 
@@ -640,6 +643,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                String ss=null;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -654,12 +658,12 @@ public class YuYueActivity extends Activity implements YuYueInterface {
 
                     ResponseBody body = response.body();
                     // Log.d("AllConnects", "识别结果返回"+response.body().string());
-                    String ss=body.string();
-                   // Log.d("InFoActivity", ss);
+                     ss=body.string();
+                    Log.d("InFoActivity", ss);
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
                     final ShiBieBean zhaoPianBean=gson.fromJson(jsonObject,ShiBieBean.class);
-                    Log.d("YuYueActivity", ":" + zhaoPianBean.getFace_info_1().getBrightness());
+                  //  Log.d("YuYueActivity", ":" + zhaoPianBean.getFace_info_1().getBrightness());
 
                     if (zhaoPianBean.getScore()>=65.0) {
                         //比对成功
@@ -693,6 +697,40 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                     }
 
                 }catch (Exception e){
+                    try {
+
+                        JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                        Gson gson=new Gson();
+                        final BiDuiFanHui zhaoPianBean=gson.fromJson(jsonObject,BiDuiFanHui.class);
+                        if (zhaoPianBean.getScore()>=65.0) {
+                            //比对成功
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    xiayibu.setEnabled(false);
+                                    xiangsidu.setText((zhaoPianBean.getScore() + "").substring(0, 5));
+                                    biduijieguo.setText("比对成功");
+                                    link_shenghe();
+
+                                }
+                            });
+                        }
+                    }catch (Exception e1){
+                        Log.d("YuYueActivity", e1.getMessage()+"");
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                biduijieguo.setText("人脸质量差");
+                                xiangsidu.setText("");
+                                Toast tastyToast= TastyToast.makeText(YuYueActivity.this,"比对失败了,人脸质量差！",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                                tastyToast.setGravity(Gravity.CENTER,0,0);
+                                tastyToast.show();
+                            }
+                        });
+                    }
+
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -701,16 +739,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                             }
                         }
                     });
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            biduijieguo.setText("人脸质量差");
-                            xiangsidu.setText("");
-                            Toast tastyToast= TastyToast.makeText(YuYueActivity.this,"比对失败了,人脸质量差！",TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                            tastyToast.setGravity(Gravity.CENTER,0,0);
-                            tastyToast.show();
-                        }
-                    });
+
 
                     Log.d("WebsocketPushMsg", e.getMessage());
                 }
@@ -727,14 +756,12 @@ public class YuYueActivity extends Activity implements YuYueInterface {
         Glide.with(YuYueActivity.this).load(zhuji+"/upload/compare/"+ objectsBeanList.get(position).getScanPhoto()).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(final Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-
+                Log.d("YuYueActivity", "执行3");
                 xuanZeDialog.dismiss();
                 xuanZeDialog=null;
-
                 String fn="yuyuezhao.jpg";
                 FileUtil.isExists(FileUtil.PATH,fn);
-                saveBitmap2File(resource.copy(Bitmap.Config.ARGB_8888,false), FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,100);
-
+                saveBitmap2File(resource, FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,80);
 
             }
         });

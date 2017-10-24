@@ -2,26 +2,23 @@ package com.example.xiaojun.posji.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
 import com.example.xiaojun.posji.beans.LogoBean;
 import com.example.xiaojun.posji.utils.GsonUtil;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
@@ -164,12 +161,19 @@ public class ShouYeActivity extends Activity implements View.OnClickListener {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Glide.with(ShouYeActivity.this).load(zhuji+"/upload/logo/"+logoBean.getLogo()).asBitmap().into(new SimpleTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    logo.setImageBitmap(resource);
-                                }
-                            });
+                            Glide.with(ShouYeActivity.this)
+                                    .load(zhuji+"/upload/logo/"+logoBean.getLogo())
+                                  //  .transform(new GlideCircleTransform(ShouYeActivity.this,1, Color.parseColor("#ffffffff")))
+                                    .thumbnail(0.1f)
+                                    //  .transform(new GlideRoundTransform(MyApplication.getAppContext(), 6))
+                                    .into(logo);
+
+//                            Glide.with(ShouYeActivity.this).load(zhuji+"/upload/logo/"+logoBean.getLogo()).asBitmap().into(new SimpleTarget<Bitmap>() {
+//                                @Override
+//                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//                                    logo.setImageBitmap(resource);
+//                                }
+//                            });
                         }
                     });
 

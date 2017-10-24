@@ -1,16 +1,16 @@
 package com.example.xiaojun.posji.beans;
 
 /**
- * Created by chenjun on 2017/5/17.
+ * Created by Administrator on 2017/10/23.
  */
 
-public class ShiBieBean {
+public class BiDuiFanHui {
 
 
     /**
-     * face1 : {"rect":{"left":21,"top":46,"width":57,"height":57},"confidence":0.9999989}
-     * face2 : {"rect":{"left":-26,"top":205,"width":283,"height":283},"confidence":0.9999981}
-     * score : 86.08437
+     * face1 : {"rect":{"left":576,"top":589,"width":311,"height":311},"confidence":0.99959975}
+     * face2 : {"rect":{"left":492,"top":754,"width":702,"height":702},"confidence":0.999997}
+     * score : 96.36503
      */
 
     private Face1Bean face1;
@@ -43,8 +43,8 @@ public class ShiBieBean {
 
     public static class Face1Bean {
         /**
-         * rect : {"left":21,"top":46,"width":57,"height":57}
-         * confidence : 0.9999989
+         * rect : {"left":576,"top":589,"width":311,"height":311}
+         * confidence : 0.99959975
          */
 
         private RectBean rect;
@@ -68,10 +68,10 @@ public class ShiBieBean {
 
         public static class RectBean {
             /**
-             * left : 21
-             * top : 46
-             * width : 57
-             * height : 57
+             * left : 576
+             * top : 589
+             * width : 311
+             * height : 311
              */
 
             private int left;
@@ -115,8 +115,8 @@ public class ShiBieBean {
 
     public static class Face2Bean {
         /**
-         * rect : {"left":-26,"top":205,"width":283,"height":283}
-         * confidence : 0.9999981
+         * rect : {"left":492,"top":754,"width":702,"height":702}
+         * confidence : 0.999997
          */
 
         private RectBeanX rect;
@@ -140,10 +140,10 @@ public class ShiBieBean {
 
         public static class RectBeanX {
             /**
-             * left : -26
-             * top : 205
-             * width : 283
-             * height : 283
+             * left : 492
+             * top : 754
+             * width : 702
+             * height : 702
              */
 
             private int left;

@@ -130,6 +130,7 @@ public class XuanZeDialog extends Dialog {
                 Glide.with(context)
                         .load(zhuji+"/upload/compare/"+item.getScanPhoto())
                         .transform(new GlideCircleTransform(context,1,Color.parseColor("#ffffffff")))
+                        .thumbnail(0.1f)
                       //  .transform(new GlideRoundTransform(MyApplication.getAppContext(), 6))
                         .into(touxiang);
 
