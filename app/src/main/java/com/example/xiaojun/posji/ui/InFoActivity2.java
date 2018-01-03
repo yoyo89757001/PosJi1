@@ -559,7 +559,7 @@ public class InFoActivity2 extends Activity {
 
              body = new FormBody.Builder()
                     .add("cardNumber",userInfoBena.getCertNumber())
-                    .add("name",userInfoBena.getPartyName())
+                    .add("name",userInfoBena.getPartyName().trim())
                     .add("gender",userInfoBena.getGender())
                     .add("birthday",userInfoBena.getBornDay())
                     .add("address",userInfoBena.getCertAddress())

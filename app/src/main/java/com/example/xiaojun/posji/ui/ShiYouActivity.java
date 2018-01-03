@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.example.xiaojun.posji.R;
@@ -25,7 +24,7 @@ public class ShiYouActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_shi_you);
         chuanSongBean= Parcels.unwrap(getIntent().getParcelableExtra("chuansong"));
         type=chuanSongBean.getType();
-        Log.d("ShiYouActivity", chuanSongBean.toString());
+     //   Log.d("ShiYouActivity", chuanSongBean.toString());
 
         IntentFilter intentFilter1 = new IntentFilter();
         intentFilter1.addAction("guanbi2");

@@ -442,7 +442,6 @@ public class RenGongActivity extends Activity {
                 .add("source","1")
                 .build();
 
-
         Request.Builder requestBuilder = new Request.Builder()
                 // .header("Content-Type", "application/json")
                 .post(body)
@@ -492,13 +491,26 @@ public class RenGongActivity extends Activity {
                     ShouFangBean zhaoPianBean=gson.fromJson(jsonObject,ShouFangBean.class);
 
                     if (zhaoPianBean.getDtoResult()==0){
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"提交成功!",TastyToast.LENGTH_LONG,TastyToast.INFO);
+                                tastyToast.setGravity(Gravity.CENTER,0,0);
+                                tastyToast.show();
+
+                            }
+                        });
                         //   Log.d("DengJiActivity", "dddd");
 
-                        ChuanSongBean bean=new ChuanSongBean(name.getText().toString(),3,zhaoPianBean.getSid(),lfrdianhua.getText().toString().trim()
-                                ,beifangren.getText().toString().trim(),riqi.getText().toString().trim(),"");
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("chuansong", Parcels.wrap(bean));
-                        startActivity(new Intent(RenGongActivity.this,ShiYouActivity.class).putExtras(bundle));
+//                        ChuanSongBean bean=new ChuanSongBean(name.getText().toString(),3,zhaoPianBean.getSid(),lfrdianhua.getText().toString().trim()
+//                                ,beifangren.getText().toString().trim(),riqi.getText().toString().trim(),"");
+//                        Bundle bundle = new Bundle();
+//                        bundle.putParcelable("chuansong", Parcels.wrap(bean));
+//                        startActivity(new Intent(RenGongActivity.this,ShiYouActivity.class).putExtras(bundle));
+
+
 
 //                        runOnUiThread(new Runnable() {
 //                            @Override

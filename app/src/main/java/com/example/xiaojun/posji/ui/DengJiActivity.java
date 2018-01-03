@@ -106,6 +106,7 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
         bidui_tv= (TextView) findViewById(R.id.bidui_tv);
         name= (TextView) findViewById(R.id.editText);
         bumen_ET= (TextView) findViewById(R.id.bumen);
+        bumen_ET.setOnClickListener(this);
         riqi_tv= (TextView) findViewById(R.id.riqi);
         shoufangren= (EditText) findViewById(R.id.shoufang);
         shoufangrenshu= (EditText) findViewById(R.id.renshu);
@@ -308,6 +309,7 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
                 .add("visitDepartment",bumen_ET.getText().toString().trim()+"")
                 .add("visitPerson",shoufangren.getText().toString().trim()+"")
                 .add("visitNum","1")
+                .add("source","1")
                 .add("homeNumber",shoufangrenshu.getText().toString().trim())
                 .build();
 
