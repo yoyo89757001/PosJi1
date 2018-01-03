@@ -71,7 +71,12 @@ public class ShouYeActivity extends Activity implements View.OnClickListener {
             }
         });
         if (baoCunBean!=null && baoCunBean.getZhangHuID()!=null){
-            link_tianqi3();
+            try {
+                link_tianqi3();
+            }catch (Exception e){
+                Log.d("ShouYeActivity", e.getMessage());
+            }
+
         }
 
 

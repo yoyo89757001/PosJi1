@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -28,8 +27,6 @@ import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
 import com.example.xiaojun.posji.beans.BiDuiFanHui;
 import com.example.xiaojun.posji.beans.ChuanSongBean;
-import com.example.xiaojun.posji.beans.DaYingXinXiBean;
-import com.example.xiaojun.posji.beans.DaYingXinXiBeanDao;
 import com.example.xiaojun.posji.beans.FanHuiBean;
 import com.example.xiaojun.posji.beans.Photos;
 import com.example.xiaojun.posji.beans.ShiBieBean;
@@ -87,7 +84,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
     private boolean isPai=false;
     private YuYueBean.ObjectsBean objectsBean=null;
     private SensorInfoReceiver sensorInfoReceiver;
-    private boolean isTiJiao=false;
+  //  private boolean isTiJiao=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +195,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                     .add("pageNum","1")
                     .add("pageSize","10")
                     .add("accountId",baoCunBean.getZhangHuID())
-                    .add("visitDepartment",shouji.getText().toString().trim())
+                    .add("phone",shouji.getText().toString().trim())
                     .build();
 
 
@@ -402,6 +399,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
         jiaZaiDialog=new JiaZaiDialog(YuYueActivity.this);
         jiaZaiDialog.setCanceledOnTouchOutside(false);// 设置点击屏幕Dialog不消失
         jiaZaiDialog.setText("上传图片中...");
+        if (!YuYueActivity.this.isFinishing())
         jiaZaiDialog.show();
 
         //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
@@ -889,8 +887,17 @@ public class YuYueActivity extends Activity implements YuYueInterface {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (tiJIaoDialog!=null && tiJIaoDialog.isShowing()){
+                    tiJIaoDialog.dismiss();
+                    tiJIaoDialog=null;
+                }
+                if (jiaZaiDialog!=null && jiaZaiDialog.isShowing()){
+                    jiaZaiDialog.dismiss();
+                }
+
                 if (tiJIaoDialog==null && !YuYueActivity.this.isFinishing()){
                     tiJIaoDialog=new TiJIaoDialog(YuYueActivity.this);
+                    if (!YuYueActivity.this.isFinishing())
                     tiJIaoDialog.show();
                 }
             }
@@ -931,9 +938,12 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (tiJIaoDialog!=null){
+                        if (tiJIaoDialog!=null && tiJIaoDialog.isShowing()){
                             tiJIaoDialog.dismiss();
                             tiJIaoDialog=null;
+                        }
+                        if (jiaZaiDialog!=null && jiaZaiDialog.isShowing()){
+                            jiaZaiDialog.dismiss();
                         }
                     }
                 });
@@ -982,7 +992,7 @@ public class YuYueActivity extends Activity implements YuYueInterface {
                     }else {
 
                         link_tianqi3();
-                        isTiJiao=true;
+                        //isTiJiao=true;
                     }
 
                 }catch (Exception e){

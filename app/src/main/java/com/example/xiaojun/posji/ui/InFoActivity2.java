@@ -8,14 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.FaceDetector;
 import android.net.Uri;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
@@ -35,22 +31,17 @@ import com.example.xiaojun.posji.beans.ShiBieBean;
 import com.example.xiaojun.posji.beans.ShouFangBean;
 import com.example.xiaojun.posji.beans.UserInfoBena;
 import com.example.xiaojun.posji.dialog.JiaZaiDialog;
-import com.example.xiaojun.posji.dialog.QueRenDialog;
 import com.example.xiaojun.posji.dialog.TiJIaoDialog;
 import com.example.xiaojun.posji.utils.FileUtil;
 import com.example.xiaojun.posji.utils.GsonUtil;
-import com.example.xiaojun.posji.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 import com.google.zxing.other.BeepManager;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.telpo.tps550.api.TelpoException;
 import com.telpo.tps550.api.idcard.IdCard;
 import com.telpo.tps550.api.idcard.IdentityInfo;
-
 import org.parceler.Parcels;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -87,17 +78,17 @@ public class InFoActivity2 extends Activity {
     private static boolean isTrue=true;
     private static boolean isTrue2=true;
     private boolean bidui=false;
-    private Bitmap bitmapBig=null;
+  //  private Bitmap bitmapBig=null;
     private GetIDInfoTask async=null;
 //    private int numberOfFace = 4;       //最大检测的人脸数
 //    private FaceDetector myFaceDetect;  //人脸识别类的实例
 //    private FaceDetector.Face[] myFace; //存储多张人脸的数组变量
 //    int myEyesDistance;           //两眼之间的距离
 //    int numberOfFaceDetected=0;       //实际检测到的人脸数
-    private static final int MESSAGE_QR_SUCCESS = 1;
+   // private static final int MESSAGE_QR_SUCCESS = 1;
     private UserInfoBena userInfoBena=null;
     private SensorInfoReceiver sensorInfoReceiver;
-    private String filePath=null;
+ //   private String filePath=null;
     private String filePath2=null;
     private File file1=null;
  //   private File file2=null;
@@ -106,14 +97,14 @@ public class InFoActivity2 extends Activity {
     private Thread thread;
     private String shengfenzhengPath=null;
     private static int lian=0;
-    private Handler mhandler = null;
+  //  private Handler mhandler = null;
     private int iDetect = 0;
     private BeepManager beepManager;
     private IdentityInfo info;
     private Bitmap zhengjianBitmap;
     private byte[] images;
-    private byte[] fringerprint;
-    private String fringerprintData;
+  //  private byte[] fringerprint;
+  //  private String fringerprintData;
     private final int REQUEST_TAKE_PHOTO=33;
     private  String zhuji=null;
     private BaoCunBeanDao baoCunBeanDao=null;
@@ -201,6 +192,9 @@ public class InFoActivity2 extends Activity {
         jiaZaiDialog=new JiaZaiDialog(InFoActivity2.this);
         jiaZaiDialog.setCanceledOnTouchOutside(false);// 设置点击屏幕Dialog不消失
         jiaZaiDialog.show();
+
+
+
 
     }
 
@@ -367,8 +361,8 @@ public class InFoActivity2 extends Activity {
                     images = IdCard.getIdCardImage();
                     zhengjianBitmap = IdCard.decodeIdCardImage(images);
                     // luyq add 增加指纹信息
-                    fringerprint = IdCard.getFringerPrint();
-                    fringerprintData = Utils.getFingerInfo(fringerprint, InFoActivity2.this);
+                    //fringerprint = IdCard.getFringerPrint();
+                    //fringerprintData = Utils.getFingerInfo(fringerprint, InFoActivity2.this);
                 }
             } catch (TelpoException e) {
                 Log.d("GetIDInfoTask", "异常" + e.getMessage());
@@ -482,7 +476,7 @@ public class InFoActivity2 extends Activity {
     protected void onPause() {
         super.onPause();
 
-        Log.d("InFoActivity2", "暂停");
+       // Log.d("InFoActivity2", "暂停");
         if (beepManager != null){
             beepManager.close();
             beepManager = null;
@@ -611,13 +605,13 @@ public class InFoActivity2 extends Activity {
                 if (tiJIaoDialog!=null){
                     tiJIaoDialog.dismiss();
                 }
-                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+               // Log.d("AllConnects", "请求识别成功"+call.request().toString());
                 //获得返回体
                 try {
 
                     ResponseBody body = response.body();
                     String ss=body.string().trim();
-                    Log.d("InFoActivity", ss);
+                  //  Log.d("InFoActivity", ss);
 
                     if (Long.parseLong(ss)>0){
 
@@ -948,7 +942,7 @@ public class InFoActivity2 extends Activity {
                     ResponseBody body = response.body();
                     String ss=body.string();
 
-                    Log.d("AllConnects", "aa   "+ss);
+                //    Log.d("AllConnects", "aa   "+ss);
 
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
@@ -1135,7 +1129,7 @@ public class InFoActivity2 extends Activity {
                     ResponseBody body = response.body();
                      // Log.d("AllConnects", "识别结果返回"+response.body().string());
                         String ss=body.string();
-                    Log.d("InFoActivity", ss);
+                  //  Log.d("InFoActivity", ss);
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
                     final ShiBieBean zhaoPianBean=gson.fromJson(jsonObject,ShiBieBean.class);
@@ -1249,7 +1243,7 @@ public class InFoActivity2 extends Activity {
 
                     ResponseBody body = response.body();
                     String ss=body.string().trim();
-                    Log.d("DengJiActivity", ss);
+                   // Log.d("DengJiActivity", ss);
 
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();

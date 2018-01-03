@@ -6,15 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
@@ -23,8 +28,11 @@ import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
+import com.example.xiaojun.posji.beans.BuMenBeans;
 import com.example.xiaojun.posji.beans.ChuanSongBean;
 import com.example.xiaojun.posji.beans.Photos;
+import com.example.xiaojun.posji.beans.PopupWindowAdapter;
+import com.example.xiaojun.posji.beans.PopupWindowAdapter2;
 import com.example.xiaojun.posji.beans.ShouFangBean;
 import com.example.xiaojun.posji.dialog.JiaZaiDialog;
 import com.example.xiaojun.posji.dialog.TiJIaoDialog;
@@ -38,6 +46,9 @@ import com.sdsmdg.tastytoast.TastyToast;
 import org.parceler.Parcels;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -54,8 +65,8 @@ public class RenGongActivity extends Activity {
     private final int REQUEST_TAKE_PHOTO=33;
     private File mSavePhotoFile;
     private ImageView paizhao;
-    private EditText name,brdianhua,lfrdianhua,beifangren,renshu,beizhu;
-    private TextView riqi;
+    private EditText name,brdianhua,lfrdianhua,beifangren;
+    private TextView riqi,beizhu,renshu;
     private Button baocun;
     public static final int TIMEOUT = 1000 * 60;
     private BaoCunBeanDao baoCunBeanDao=null;
@@ -66,6 +77,12 @@ public class RenGongActivity extends Activity {
     private TiJIaoDialog tiJIaoDialog=null;
     private SensorInfoReceiver sensorInfoReceiver;
     private boolean isTiJiao=false;
+    private List<String> stringList=new ArrayList<>();
+    private List<String> stringList2=new ArrayList<>();
+    private PopupWindow popupWindow=null;
+    private PopupWindowAdapter adapterss;
+    private PopupWindowAdapter2 adapterss2;
+    private int p3=-1,p4=-1;
 
 
     @Override
@@ -84,14 +101,19 @@ public class RenGongActivity extends Activity {
             Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"请先设置主机地址",TastyToast.LENGTH_LONG,TastyToast.ERROR);
             tastyToast.setGravity(Gravity.CENTER,0,0);
             tastyToast.show();
+            return;
         }
 
         IntentFilter intentFilter1 = new IntentFilter();
         intentFilter1.addAction("guanbi2");
         sensorInfoReceiver = new SensorInfoReceiver();
         registerReceiver(sensorInfoReceiver, intentFilter1);
-
+        stringList2.add("业务");
+        stringList2.add("合作");
+        stringList2.add("面试");
+        stringList2.add("其它");
         initView();
+        link_bumen();
 
     }
 
@@ -133,7 +155,9 @@ public class RenGongActivity extends Activity {
 
                     try {
                         if (isTiJiao){
+
                             link_save();
+
                         }else {
                             Toast tastyToast= TastyToast.makeText(RenGongActivity.this,"人脸质量太低，请重新拍摄",TastyToast.LENGTH_LONG,TastyToast.ERROR);
                             tastyToast.setGravity(Gravity.CENTER,0,0);
@@ -161,8 +185,55 @@ public class RenGongActivity extends Activity {
         brdianhua= (EditText) findViewById(R.id.dianhua);
         lfrdianhua= (EditText) findViewById(R.id.chepai);
         beifangren= (EditText) findViewById(R.id.dizhi);
-        renshu= (EditText) findViewById(R.id.renshu);
-        beizhu= (EditText) findViewById(R.id.mudi);
+        renshu= (TextView) findViewById(R.id.renshu);
+        renshu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                View contentView = LayoutInflater.from(RenGongActivity.this).inflate(R.layout.xiangmu_po_item, null);
+                popupWindow=new PopupWindow(contentView,400, 560);
+                ListView listView= (ListView) contentView.findViewById(R.id.dddddd);
+                adapterss=new PopupWindowAdapter(RenGongActivity.this,stringList);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        renshu.setText(stringList.get(position));
+                        popupWindow.dismiss();
+                    }
+                });
+                listView.setAdapter(adapterss);
+
+                popupWindow.setFocusable(true);//获取焦点
+                popupWindow.setOutsideTouchable(true);//获取外部触摸事件
+                popupWindow.setTouchable(true);//能够响应触摸事件
+                popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));//设置背景
+                popupWindow.showAsDropDown(renshu,renshu.getLeft()-150,0);
+            }
+        });
+        beizhu= (TextView) findViewById(R.id.mudi);
+        beizhu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View contentView = LayoutInflater.from(RenGongActivity.this).inflate(R.layout.xiangmu_po_item, null);
+                popupWindow=new PopupWindow(contentView,400, 390);
+                ListView listView= (ListView) contentView.findViewById(R.id.dddddd);
+                adapterss2=new PopupWindowAdapter2(RenGongActivity.this,stringList2);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        beizhu.setText(stringList2.get(position));
+                        popupWindow.dismiss();
+                    }
+                });
+                listView.setAdapter(adapterss2);
+
+                popupWindow.setFocusable(true);//获取焦点
+                popupWindow.setOutsideTouchable(true);//获取外部触摸事件
+                popupWindow.setTouchable(true);//能够响应触摸事件
+                popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));//设置背景
+                popupWindow.showAsDropDown(beizhu,beizhu.getLeft()-150,0);
+            }
+        });
 
 
     }
@@ -334,6 +405,7 @@ public class RenGongActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (sensorInfoReceiver!=null)
         unregisterReceiver(sensorInfoReceiver);
     }
 
@@ -357,11 +429,12 @@ public class RenGongActivity extends Activity {
 //        String boundary = "xx--------------------------------------------------------------xx";
         RequestBody body = new FormBody.Builder()
                 .add("name",name.getText().toString().trim()+"")
-                .add("phone",lfrdianhua.getText().toString().trim()+"")
+                .add("phone",brdianhua.getText().toString().trim()+"")
                 .add("visitDate2",riqi.getText().toString().trim()+"")
                 .add("visitPerson",beifangren.getText().toString().trim()+"")
-                .add("visitDepartment",brdianhua.getText().toString().trim()+"")
-                .add("visitNum",renshu.getText().toString().trim()+"")
+                .add("visitDepartment",renshu.getText().toString().trim()+"")
+                .add("visitNum","1")
+                .add("homeNumber",lfrdianhua.getText().toString().trim())
                 .add("accountId",baoCunBean.getZhangHuID())
                 .add("scanPhoto",photos.getExDesc())
                 .add("visitIncident",beizhu.getText().toString().trim()+"")
@@ -605,5 +678,90 @@ public class RenGongActivity extends Activity {
         });
 
 
+    }
+
+    private void link_bumen() {
+
+        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
+        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
+        if (null!=baoCunBean.getZhuji()) {
+
+            //    /* form的分割线,自己定义 */
+            //        String boundary = "xx--------------------------------------------------------------xx";
+            RequestBody body = new FormBody.Builder()
+                    .add("status","1")
+                    .add("token",System.currentTimeMillis()+"")
+                    .add("accountId",baoCunBean.getZhangHuID())
+                    .build();
+
+            Request.Builder requestBuilder = new Request.Builder()
+                    // .header("Content-Type", "application/json")
+                    .post(body)
+                    .url(baoCunBean.getZhuji() + "/queryAllDept.do");
+
+            // step 3：创建 Call 对象
+            Call call = okHttpClient.newCall(requestBuilder.build());
+
+            //step 4: 开始异步请求
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d("AllConnects", "请求识别失败" + e.getMessage());
+
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String ss=null;
+                    Log.d("AllConnects", "请求识别成功" + call.request().toString());
+                    //获得返回体
+                    try {
+
+                        ResponseBody body = response.body();
+                        ss = body.string().trim();
+                        Log.d("DengJiActivity", ss);
+
+                        JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                        Gson gson = new Gson();
+                        BuMenBeans zhaoPianBean = gson.fromJson(jsonObject, BuMenBeans.class);
+                        int size=zhaoPianBean.getObjects().size();
+                        if (stringList.size()>0){
+                            stringList.clear();
+                        }
+                        for (int i=0;i<size;i++){
+                            stringList.add(zhaoPianBean.getObjects().get(i).getDeptName());
+                        }
+                        Collections.reverse(stringList); // 倒序排列
+
+
+                    } catch (Exception e) {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (tiJIaoDialog != null && !RenGongActivity.this.isFinishing()) {
+                                    tiJIaoDialog.dismiss();
+                                    tiJIaoDialog = null;
+                                }
+                            }
+                        });
+
+                        Log.d("WebsocketPushMsg", e.getMessage());
+                    }
+                }
+            });
+        }else {
+            Toast tastyToast = TastyToast.makeText(RenGongActivity.this, "账户ID为空!,请设置帐户ID", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+            tastyToast.setGravity(Gravity.CENTER, 0, 0);
+            tastyToast.show();
+        }
     }
 }

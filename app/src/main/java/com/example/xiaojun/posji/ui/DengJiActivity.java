@@ -6,15 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
@@ -23,7 +28,9 @@ import com.example.xiaojun.posji.MyAppLaction;
 import com.example.xiaojun.posji.R;
 import com.example.xiaojun.posji.beans.BaoCunBean;
 import com.example.xiaojun.posji.beans.BaoCunBeanDao;
+import com.example.xiaojun.posji.beans.BuMenBeans;
 import com.example.xiaojun.posji.beans.ChuanSongBean;
+import com.example.xiaojun.posji.beans.PopupWindowAdapter;
 import com.example.xiaojun.posji.beans.ShouFangBean;
 import com.example.xiaojun.posji.dialog.TiJIaoDialog;
 import com.example.xiaojun.posji.dialog.YuYueDialog;
@@ -39,6 +46,8 @@ import org.parceler.Parcels;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
@@ -52,8 +61,8 @@ import okhttp3.ResponseBody;
 
 public class DengJiActivity extends Activity implements View.OnClickListener {
     private ImageView riqi_im,touxiang;
-    private TextView riqi_tv,name,bidui_tv;
-    private EditText shoufangren,shoufangrenshu,bumen_ET;
+    private TextView riqi_tv,name,bidui_tv,bumen_ET;
+    private EditText shoufangren,shoufangrenshu;
     private Button wancheng;
     private SensorInfoReceiver sensorInfoReceiver;
     public static final int TIMEOUT = 1000 * 60;
@@ -63,6 +72,11 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
     private BaoCunBeanDao baoCunBeanDao=null;
     private BaoCunBean baoCunBean=null;
     private ChuanSongBean chuanSongBean=null;
+    private List<String> stringList=new ArrayList<>();
+    private PopupWindow popupWindow=null;
+    private PopupWindowAdapter adapterss;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +105,7 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
         touxiang= (ImageView) findViewById(R.id.touxiang);
         bidui_tv= (TextView) findViewById(R.id.bidui_tv);
         name= (TextView) findViewById(R.id.editText);
-        bumen_ET= (EditText) findViewById(R.id.bumen);
+        bumen_ET= (TextView) findViewById(R.id.bumen);
         riqi_tv= (TextView) findViewById(R.id.riqi);
         shoufangren= (EditText) findViewById(R.id.shoufang);
         shoufangrenshu= (EditText) findViewById(R.id.renshu);
@@ -130,6 +144,8 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
                 .transform(new GlideCircleTransform(DengJiActivity.this,2,Color.parseColor("#ffffffff")))
                 .into(touxiang);
 
+        link_bumen();
+
     }
 
     @Override
@@ -141,36 +157,28 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
                 startActivityForResult(intent,2);
 
                 break;
-//            case R.id.imageView2: //部门
-//                View popupView =getLayoutInflater().inflate(R.layout.popupwindow, null);
-//                //  2016/5/17 为了演示效果，简单的设置了一些数据，实际中大家自己设置数据即可，相信大家都会。
-//                ListView lsvMore = (ListView) popupView.findViewById(R.id.lsvMore);
-//                lsvMore.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                        xuanzhong=position;
-//                        window.dismiss();
-//
-//                    }
-//                });
-//                lsvMore.setAdapter(myadapter);
-//                //  2016/5/17 创建PopupWindow对象，指定宽度和高度
-//                 window = new PopupWindow(popupView, 200, 340);
-//                //  2016/5/17 设置动画
-//               // window.setAnimationStyle(R.style.AnimBottom2);
-//                //  2016/5/17 设置背景颜色
-//                window.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc4285f4")));
-//                //  2016/5/17 设置可以获取焦点
-//                window.setFocusable(true);
-//                //  2016/5/17 设置可以触摸弹出框以外的区域
-//                window.setOutsideTouchable(true);
-//                // 更新popupwindow的状态
-//                window.update();
-//                //  2016/5/17 以下拉的方式显示，并且可以设置显示的位置
-//                window.showAsDropDown(bumen_im, -200,0);
-//
-//
-//                break;
+            case R.id.bumen: //部门
+                View contentView = LayoutInflater.from(DengJiActivity.this).inflate(R.layout.xiangmu_po_item, null);
+                popupWindow=new PopupWindow(contentView,400, 560);
+                ListView listView= (ListView) contentView.findViewById(R.id.dddddd);
+                adapterss=new PopupWindowAdapter(DengJiActivity.this,stringList);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        bumen_ET.setText(stringList.get(position));
+                        popupWindow.dismiss();
+                    }
+                });
+                listView.setAdapter(adapterss);
+
+                popupWindow.setFocusable(true);//获取焦点
+                popupWindow.setOutsideTouchable(true);//获取外部触摸事件
+                popupWindow.setTouchable(true);//能够响应触摸事件
+                popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));//设置背景
+                popupWindow.showAsDropDown(bumen_ET,bumen_ET.getLeft()-150,0);
+
+
+                break;
             case R.id.queren2:
 
                 if (zhuji!=null)
@@ -299,7 +307,8 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
                 .add("visitDate2",riqi_tv.getText().toString().trim())
                 .add("visitDepartment",bumen_ET.getText().toString().trim()+"")
                 .add("visitPerson",shoufangren.getText().toString().trim()+"")
-                .add("visitNum",shoufangrenshu.getText().toString().trim()+"")
+                .add("visitNum","1")
+                .add("homeNumber",shoufangrenshu.getText().toString().trim())
                 .build();
 
         Request.Builder requestBuilder = new Request.Builder()
@@ -404,5 +413,89 @@ public class DengJiActivity extends Activity implements View.OnClickListener {
         });
     }
 
+    private void link_bumen() {
+
+        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
+        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
+        if (null!=baoCunBean.getZhuji()) {
+
+            //    /* form的分割线,自己定义 */
+            //        String boundary = "xx--------------------------------------------------------------xx";
+            RequestBody body = new FormBody.Builder()
+                    .add("status","1")
+                    .add("token",System.currentTimeMillis()+"")
+                    .add("accountId",baoCunBean.getZhangHuID())
+                    .build();
+
+            Request.Builder requestBuilder = new Request.Builder()
+                    // .header("Content-Type", "application/json")
+                    .post(body)
+                    .url(baoCunBean.getZhuji() + "/queryAllDept.do");
+
+            // step 3：创建 Call 对象
+            Call call = okHttpClient.newCall(requestBuilder.build());
+
+            //step 4: 开始异步请求
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d("AllConnects", "请求识别失败" + e.getMessage());
+
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String ss=null;
+                    Log.d("AllConnects", "请求识别成功" + call.request().toString());
+                    //获得返回体
+                    try {
+
+                        ResponseBody body = response.body();
+                        ss = body.string().trim();
+                        Log.d("DengJiActivity", ss);
+
+                        JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                        Gson gson = new Gson();
+                        BuMenBeans zhaoPianBean = gson.fromJson(jsonObject, BuMenBeans.class);
+                        int size=zhaoPianBean.getObjects().size();
+                        if (stringList.size()>0){
+                            stringList.clear();
+                        }
+                        for (int i=0;i<size;i++){
+                            stringList.add(zhaoPianBean.getObjects().get(i).getDeptName());
+                        }
+                        Collections.reverse(stringList); // 倒序排列
+
+
+                    } catch (Exception e) {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (tiJIaoDialog != null && !DengJiActivity.this.isFinishing()) {
+                                    tiJIaoDialog.dismiss();
+                                    tiJIaoDialog = null;
+                                }
+                            }
+                        });
+
+                        Log.d("WebsocketPushMsg", e.getMessage());
+                    }
+                }
+            });
+        }else {
+            Toast tastyToast = TastyToast.makeText(DengJiActivity.this, "账户ID为空!,请设置帐户ID", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+            tastyToast.setGravity(Gravity.CENTER, 0, 0);
+            tastyToast.show();
+        }
+    }
 
 }
