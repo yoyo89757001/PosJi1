@@ -396,7 +396,7 @@ public class InFoActivity2 extends Activity {
 
                 //设置信息
                 beepManager.playBeepSoundAndVibrate();
-                name.setText(info.getName());
+                name.setText(info.getName().trim());
                 xingbie.setText(info.getSex());
               //  Log.d("GetIDInfoTask", info.getSex());
                 shenfengzheng.setText(info.getNo());
@@ -416,7 +416,7 @@ public class InFoActivity2 extends Activity {
 
                 saveBitmap2File(zhengjianBitmap.copy(Bitmap.Config.ARGB_8888,false), FileUtil.SDPATH+ File.separator+FileUtil.PATH+File.separator+fn,100);
 
-                userInfoBena = new UserInfoBena(info.getName(), info.getSex().equals("男") ? 1 + "" : 2 + "", info.getNation(), time, info.getAddress(), info.getNo(), info.getApartment(), time2, time3, null, null, null);
+                userInfoBena = new UserInfoBena(info.getName().trim(), info.getSex().equals("男") ? 1 + "" : 2 + "", info.getNation(), time, info.getAddress(), info.getNo(), info.getApartment(), time2, time3, null, null, null);
 
 
             } else {
